@@ -1,5 +1,5 @@
 // src/features/sudoku/generator.ts
-import type { Grid, Digit, Rank } from './types'
+import type { Grid, Rank } from './types'
 import { emptyGrid, cloneGrid, RANK_VISIBLE_RANGES } from './types'
 import { solve, hasUniqueSolution } from './solver'
 
@@ -47,14 +47,18 @@ function removeCellsWhileMaintainingUniqueSolution(
     
     // Temporarily remove cell
     const originalValue = workingGrid[r]?.[c]
-    workingGrid[r]![c] = null
+    if (originalValue !== undefined) {
+      workingGrid[r]![c] = null
+    }
     
     // Check if still has unique solution
     if (hasUniqueSolution(cloneGrid(workingGrid))) {
       removedCount++
     } else {
       // Restore value if no unique solution
-      workingGrid[r]![c] = originalValue
+      if (originalValue !== undefined) {
+        workingGrid[r]![c] = originalValue
+      }
     }
   }
   
@@ -104,10 +108,5 @@ export function countFilledCells(grid: Grid): number {
   return count
 }
 
-/**
- * Generates random number between min and max (inclusive)
- */
-function randomBetween(min: number, max: number): number {
-  return Math.floor(Math.random() * (max - min + 1)) + min
-}
+// Removed unused function
 

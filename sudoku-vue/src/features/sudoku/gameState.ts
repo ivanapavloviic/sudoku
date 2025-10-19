@@ -1,6 +1,6 @@
 // src/features/sudoku/gameState.ts
 import type { Grid, Digit, Rank, MaybeDigit } from './types'
-import { cloneGrid, emptyGrid } from './types'
+import { cloneGrid } from './types'
 import { isValidPlacement, isSolved } from './validate'
 import { generatePuzzle } from './generator'
 import { solve } from './solver'
@@ -199,7 +199,7 @@ export function getAvailableDigits(state: GameState): { digit: Digit; isComplete
   for (let r = 0; r < 9; r++) {
     for (let c = 0; c < 9; c++) {
       const value = state.currentGrid[r]?.[c]
-      if (value !== null) {
+      if (value !== null && value !== undefined) {
         digitCounts.set(value, (digitCounts.get(value) || 0) + 1)
       }
     }
