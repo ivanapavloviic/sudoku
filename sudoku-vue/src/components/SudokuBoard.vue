@@ -154,15 +154,17 @@ const handleKeydown = (event: KeyboardEvent, row: number, col: number) => {
   font-size: 1.5rem;
   font-weight: bold;
   user-select: none;
+  color: #333;
 }
 
 .grid-cell:hover {
   background-color: #f0f8ff;
+  color: #333;
 }
 
 .grid-cell.selected {
   background-color: #4a90e2;
-  color: white;
+  color: #333;
 }
 
 .grid-cell.original {
@@ -173,14 +175,14 @@ const handleKeydown = (event: KeyboardEvent, row: number, col: number) => {
 
 .grid-cell.conflict {
   background-color: #ff4444;
-  color: white;
+  color: #333;
   animation: conflictPulse 0.5s ease-in-out;
   border: 2px solid #cc0000;
 }
 
 .grid-cell.hint {
   background-color: #4a90e2;
-  color: white;
+  color: #333;
   animation: hintGlow 0.8s ease-in-out;
   border: 2px solid #357abd;
 }
@@ -204,6 +206,7 @@ const handleKeydown = (event: KeyboardEvent, row: number, col: number) => {
 .cell-value {
   font-size: 1.5rem;
   font-weight: bold;
+  color: #333;
 }
 
 .cell-placeholder {

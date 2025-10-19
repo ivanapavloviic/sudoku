@@ -174,17 +174,17 @@ const formatDate = (dateString: string): string => {
 
 .leaderboard-entry.rank-1 {
   background: linear-gradient(135deg, #FFD700, #FFA500);
-  color: white;
+  color: #333;
 }
 
 .leaderboard-entry.rank-2 {
   background: linear-gradient(135deg, #C0C0C0, #A0A0A0);
-  color: white;
+  color: #333;
 }
 
 .leaderboard-entry.rank-3 {
   background: linear-gradient(135deg, #CD7F32, #B8860B);
-  color: white;
+  color: #333;
 }
 
 .rank-badge {
@@ -201,19 +201,23 @@ const formatDate = (dateString: string): string => {
   font-size: 1.3rem;
   font-weight: bold;
   margin-bottom: 5px;
+  color: #333;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .entry-details {
   display: flex;
   gap: 15px;
   font-size: 0.8rem;
-  opacity: 0.8;
+  opacity: 0.9;
   margin-bottom: 3px;
+  color: #555;
 }
 
 .entry-date {
   font-size: 0.7rem;
-  opacity: 0.6;
+  opacity: 0.7;
+  color: #666;
 }
 
 /* Responsive design */

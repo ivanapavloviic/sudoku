@@ -75,8 +75,8 @@ const getDifficultyDescription = (rank: string): string => {
 
 .difficulty-options {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 15px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
   max-width: 800px;
   margin: 0 auto;
 }
@@ -88,14 +88,21 @@ const getDifficultyDescription = (rank: string): string => {
   padding: 20px;
   cursor: pointer;
   transition: all 0.3s ease;
-  text-align: left;
+  text-align: center;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  min-height: 120px;
+  justify-content: center;
 }
 
 .difficulty-btn:hover {
   border-color: #4a90e2;
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  background-color: #f8f9ff;
 }
 
 .difficulty-btn.active {
@@ -110,28 +117,33 @@ const getDifficultyDescription = (rank: string): string => {
   font-weight: bold;
   color: #333;
   margin-bottom: 5px;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
 }
 
 .difficulty-range {
   font-size: 0.9rem;
   color: #666;
   margin-bottom: 5px;
+  font-weight: 500;
 }
 
 .difficulty-description {
   font-size: 0.8rem;
   color: #888;
   font-style: italic;
+  text-align: center;
 }
 
 /* Responsive design */
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   .difficulty-options {
     grid-template-columns: 1fr;
+    gap: 15px;
   }
   
   .difficulty-btn {
     padding: 15px;
+    min-height: 100px;
   }
 }
 </style>

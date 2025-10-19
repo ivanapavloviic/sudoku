@@ -20,6 +20,7 @@ const conflicts = ref<Array<{ row: number; col: number }>>([])
 const hints = ref<Array<{ row: number; col: number }>>([])
 const leaderboard = ref<Leaderboard>(loadLeaderboard())
 const showLeaderboard = ref(false)
+const showDifficultySelector = ref(false)
 const gameCompleted = ref(false)
 
 // Timer
@@ -50,6 +51,7 @@ const startNewGame = (rank: string) => {
   hints.value = []
   gameCompleted.value = false
   showLeaderboard.value = false
+  showDifficultySelector.value = false
   startTimer()
 }
 
@@ -124,6 +126,16 @@ const selectDigit = (digit: number) => {
   selectedDigit.value = digit
 }
 
+const getDifficultyName = (rank: string): string => {
+  const names: Record<string, string> = {
+    [Rank.Beginner]: 'Easy',
+    [Rank.Intermediate]: 'Medium', 
+    [Rank.Hard]: 'Hard',
+    [Rank.Expert]: 'Expert',
+  }
+  return names[rank] || 'Unknown'
+}
+
 const handleGameCompletion = () => {
   if (!gameState.value) return
   
@@ -161,6 +173,7 @@ const resetGame = () => {
   hints.value = []
   gameCompleted.value = false
   showLeaderboard.value = false
+  showDifficultySelector.value = true // Show difficulty selector when starting new game
 }
 
 onMounted(() => {
@@ -187,6 +200,11 @@ onUnmounted(() => {
           :selected-rank="Rank.Beginner"
           @difficulty-selected="startNewGame"
         />
+        <div class="setup-actions">
+          <button class="control-btn change-difficulty" @click="showDifficultySelector = true">
+            🔄 Change Level
+          </button>
+        </div>
       </div>
 
       <!-- Game Interface -->
@@ -208,6 +226,11 @@ onUnmounted(() => {
 
           <!-- Center Panel -->
           <div class="center-panel">
+            <!-- Level Label above the board -->
+            <div class="level-label">
+              <span class="level-text">Level: {{ getDifficultyName(gameState.rank) }}</span>
+            </div>
+            
             <SudokuBoard
               :grid="gameState.currentGrid"
               :original-grid="gameState.originalGrid"
@@ -229,6 +252,9 @@ onUnmounted(() => {
           <!-- Right Panel -->
           <div class="right-panel">
             <div class="game-controls">
+              <button class="control-btn change-difficulty" @click="showDifficultySelector = true">
+                🔄 Change Level
+              </button>
               <button class="control-btn new-game" @click="resetGame">
                 🆕 New Game
               </button>
@@ -250,12 +276,61 @@ onUnmounted(() => {
           <button class="control-btn" @click="showLeaderboard = false">
             ← Back to Game
           </button>
+          <button class="control-btn change-difficulty" @click="showDifficultySelector = true">
+            🔄 Change Level
+          </button>
           <button class="control-btn new-game" @click="resetGame">
             🆕 New Game
           </button>
         </div>
       </div>
     </main>
+
+    <!-- Difficulty Selector Modal -->
+    <div v-if="showDifficultySelector" class="difficulty-modal">
+      <div class="modal-content">
+        <h2>🎯 Change Difficulty Level</h2>
+        <p>Select a new difficulty level for your Sudoku game:</p>
+        <div class="difficulty-options">
+          <button 
+            class="difficulty-btn beginner" 
+            @click="startNewGame(Rank.Beginner)"
+          >
+            <span class="difficulty-name">Easy</span>
+            <span class="difficulty-desc">36-40 cells visible</span>
+          </button>
+          <button 
+            class="difficulty-btn intermediate" 
+            @click="startNewGame(Rank.Intermediate)"
+          >
+            <span class="difficulty-name">Medium</span>
+            <span class="difficulty-desc">32-36 cells visible</span>
+          </button>
+          <button 
+            class="difficulty-btn hard" 
+            @click="startNewGame(Rank.Hard)"
+          >
+            <span class="difficulty-name">Hard</span>
+            <span class="difficulty-desc">28-32 cells visible</span>
+          </button>
+          <button 
+            class="difficulty-btn expert" 
+            @click="startNewGame(Rank.Expert)"
+          >
+            <span class="difficulty-name">Expert</span>
+            <span class="difficulty-desc">24-28 cells visible</span>
+          </button>
+        </div>
+        <div class="modal-actions">
+          <button class="control-btn" @click="showDifficultySelector = false">
+            Cancel
+          </button>
+          <button class="control-btn new-game" @click="resetGame">
+            🆕 New Game
+          </button>
+        </div>
+      </div>
+    </div>
 
     <!-- Game Completion Modal -->
     <div v-if="gameCompleted && gameState" class="completion-modal">
@@ -279,6 +354,9 @@ onUnmounted(() => {
         <div class="modal-actions">
           <button class="control-btn" @click="showLeaderboard = true">
             View Leaderboard
+          </button>
+          <button class="control-btn change-difficulty" @click="showDifficultySelector = true">
+            🔄 Change Level
           </button>
           <button class="control-btn new-game" @click="resetGame">
             Play Again
@@ -321,6 +399,14 @@ onUnmounted(() => {
 
 .game-setup {
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.setup-actions {
+  display: flex;
+  gap: 15px;
   justify-content: center;
 }
 
@@ -349,6 +435,20 @@ onUnmounted(() => {
   flex-direction: column;
   align-items: center;
   gap: 20px;
+}
+
+.level-label {
+  background: #4a90e2;
+  color: white;
+  padding: 8px 20px;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 1.1rem;
+  box-shadow: 0 2px 8px rgba(74, 144, 226, 0.3);
+}
+
+.level-text {
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .game-controls {
@@ -392,6 +492,14 @@ onUnmounted(() => {
   background: #f57c00;
 }
 
+.control-btn.change-difficulty {
+  background: #9C27B0;
+}
+
+.control-btn.change-difficulty:hover {
+  background: #7B1FA2;
+}
+
 .leaderboard-view {
   display: flex;
   flex-direction: column;
@@ -403,6 +511,19 @@ onUnmounted(() => {
   display: flex;
   gap: 15px;
   justify-content: center;
+}
+
+.difficulty-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
 }
 
 .completion-modal {
@@ -458,6 +579,77 @@ onUnmounted(() => {
   font-weight: bold;
   color: #333;
   font-size: 1.1rem;
+}
+
+.difficulty-options {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  margin: 30px 0;
+}
+
+.difficulty-btn {
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.difficulty-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.difficulty-btn.beginner {
+  border-color: #4CAF50;
+}
+
+.difficulty-btn.beginner:hover {
+  background: #4CAF50;
+  color: white;
+}
+
+.difficulty-btn.intermediate {
+  border-color: #FF9800;
+}
+
+.difficulty-btn.intermediate:hover {
+  background: #FF9800;
+  color: white;
+}
+
+.difficulty-btn.hard {
+  border-color: #F44336;
+}
+
+.difficulty-btn.hard:hover {
+  background: #F44336;
+  color: white;
+}
+
+.difficulty-btn.expert {
+  border-color: #9C27B0;
+}
+
+.difficulty-btn.expert:hover {
+  background: #9C27B0;
+  color: white;
+}
+
+.difficulty-name {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.difficulty-desc {
+  font-size: 0.9rem;
+  opacity: 0.7;
 }
 
 .modal-actions {
