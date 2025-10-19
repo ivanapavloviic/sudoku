@@ -27,7 +27,7 @@ export const RANK_VISIBLE_RANGES: Record<Rank, { min: number; max: number }> = {
   [Rank.Expert]: { min: 24, max: 28 },
 }
 
-// Helpers
+// Helper constants
 export const BOX_SIZE = 3
 export const GRID_SIZE = 9
 

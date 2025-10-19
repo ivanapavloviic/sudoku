@@ -4,7 +4,7 @@ import { GRID_SIZE } from './types'
 import { isValidPlacement } from './validate'
 
 /**
- * Pronađi sledeću praznu ćeliju (row-major). Vraća [r,c] ili null.
+ * Find next empty cell (row-major). Returns [r,c] or null.
  */
 function findEmpty(grid: Grid): [number, number] | null {
   for (let r = 0; r < GRID_SIZE; r++) {
@@ -16,15 +16,15 @@ function findEmpty(grid: Grid): [number, number] | null {
 }
 
 /**
- * Klasični backtracking solver. Mutira grid.
- * Vraća true ako je rešivo i popunjeno, inače false.
+ * Classic backtracking solver. Mutates grid.
+ * Returns true if solvable and filled, otherwise false.
  */
 export function solve(grid: Grid): boolean {
   const empty = findEmpty(grid)
   if (!empty) return true
   const [r, c] = empty
 
-  // Nasumičan redosled 1..9 poboljšava raznovrsnost
+  // Random order 1..9 improves variety
   const digits: Digit[] = [1, 2, 3, 4, 5, 6, 7, 8, 9] as Digit[]
   for (let i = digits.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1))
@@ -44,8 +44,8 @@ export function solve(grid: Grid): boolean {
 }
 
 /**
- * Broji rešenja do max 2 (za detekciju jedinstvenog rešenja).
- * Ne randomizuje, ide deterministički 1..9.
+ * Count solutions up to max 2 (for unique solution detection).
+ * Does not randomize, goes deterministically 1..9.
  */
 export function hasUniqueSolution(grid: Grid): boolean {
   let count = 0

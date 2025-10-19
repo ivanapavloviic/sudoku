@@ -27,7 +27,7 @@ export function boxHas(grid: Grid, r: number, c: number, value: Digit): boolean 
 }
 
 export function isValidPlacement(grid: Grid, r: number, c: number, value: Digit): boolean {
-  // vrednost ne sme već da postoji u redu/koloni/box-u
+  // Value must not already exist in row/column/box
   return !rowHas(grid, r, value) && !colHas(grid, c, value) && !boxHas(grid, r, c, value)
 }
 
@@ -58,7 +58,7 @@ export function isSolved(grid: Grid): boolean {
     for (let c = 0; c < GRID_SIZE; c++) {
       const v = grid[r]?.[c]
       if (v === null) return false
-      // Privremeno ukloni pa proveri validnost (da izbegnemo false positive)
+      // Temporarily remove and check validity (to avoid false positive)
       grid[r]![c] = null
       const ok = isValidPlacement(grid, r, c, v as Digit)
       grid[r]![c] = v as MaybeDigit
