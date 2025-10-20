@@ -33,6 +33,7 @@ interface Props {
   selectedCell: { row: number; col: number } | null
   conflicts: Array<{ row: number; col: number }>
   hints: Array<{ row: number; col: number }>
+  completedBoxes: Array<{ row: number; col: number }>
 }
 
 interface Emits {
@@ -47,6 +48,15 @@ const isRowCompleted = (rowIndex: number): boolean => {
   const row = props.grid[rowIndex]
   if (!row) return false
   return row.every(cell => cell !== null)
+}
+
+const isCellInCompletedBox = (row: number, col: number): boolean => {
+  const boxRow = Math.floor(row / 3)
+  const boxCol = Math.floor(col / 3)
+  
+  return props.completedBoxes.some(box => 
+    box.row === boxRow && box.col === boxCol
+  )
 }
 
 // Removed unused functions
@@ -72,6 +82,11 @@ const getCellClasses = (rowIndex: number, colIndex: number): string[] => {
   // Hint cell (blue)
   if (props.hints.some(hint => hint.row === rowIndex && hint.col === colIndex)) {
     classes.push('hint')
+  }
+  
+  // Completed box cell
+  if (isCellInCompletedBox(rowIndex, colIndex)) {
+    classes.push('completed-box')
   }
   
   // Box boundaries
@@ -203,6 +218,19 @@ const handleKeydown = (event: KeyboardEvent, row: number, col: number) => {
   border-right: 3px solid #333;
 }
 
+.grid-cell.completed-box {
+  background: linear-gradient(135deg, #e8f5e8, #d4edda);
+  opacity: 0.7;
+  animation: boxComplete 1.5s ease-in-out;
+  border: 2px solid #28a745;
+  box-shadow: 0 0 10px rgba(40, 167, 69, 0.3);
+}
+
+.grid-cell.completed-box .cell-value {
+  color: #155724;
+  font-weight: bold;
+}
+
 .cell-value {
   font-size: 1.5rem;
   font-weight: bold;
@@ -237,6 +265,24 @@ const handleKeydown = (event: KeyboardEvent, row: number, col: number) => {
   100% { 
     transform: scale(1);
     box-shadow: 0 0 0 0 rgba(74, 144, 226, 0.7);
+  }
+}
+
+@keyframes boxComplete {
+  0% { 
+    transform: scale(1);
+    background: linear-gradient(135deg, #e8f5e8, #d4edda);
+    box-shadow: 0 0 5px rgba(40, 167, 69, 0.3);
+  }
+  50% { 
+    transform: scale(1.05);
+    background: linear-gradient(135deg, #d4edda, #c3e6cb);
+    box-shadow: 0 0 20px rgba(40, 167, 69, 0.6);
+  }
+  100% { 
+    transform: scale(1);
+    background: linear-gradient(135deg, #e8f5e8, #d4edda);
+    box-shadow: 0 0 10px rgba(40, 167, 69, 0.3);
   }
 }
 
