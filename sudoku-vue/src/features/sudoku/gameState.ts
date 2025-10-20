@@ -25,6 +25,10 @@ export interface GameState {
   // Hint system
   maxHints: number
   hintCost: number // Current cost of next hint
+
+  // History
+  undoStack: GameSnapshot[]
+  redoStack: GameSnapshot[]
 }
 
 export interface GameResult {
@@ -34,6 +38,40 @@ export interface GameResult {
   errorsCount: number
   rank: Rank
   completed: boolean
+}
+
+interface GameSnapshot {
+  grid: Grid
+  score: number
+  hintsUsed: number
+  hintCost: number
+  errorsCount: number
+  isCompleted: boolean
+  endTime?: number
+}
+
+function takeSnapshot(state: GameState): GameSnapshot {
+  return {
+    grid: cloneGrid(state.currentGrid),
+    score: state.score,
+    hintsUsed: state.hintsUsed,
+    hintCost: state.hintCost,
+    errorsCount: state.errorsCount,
+    isCompleted: state.isCompleted,
+    endTime: state.endTime,
+  }
+}
+
+function applySnapshot(state: GameState, snap: GameSnapshot): GameState {
+  const newState = { ...state }
+  newState.currentGrid = cloneGrid(snap.grid)
+  newState.score = snap.score
+  newState.hintsUsed = snap.hintsUsed
+  newState.hintCost = snap.hintCost
+  newState.errorsCount = snap.errorsCount
+  newState.isCompleted = snap.isCompleted
+  newState.endTime = snap.endTime
+  return newState
 }
 
 /**
@@ -58,6 +96,8 @@ export function createNewGame(rank: Rank): GameState {
     errorsCount: 0,
     maxHints: 10,
     hintCost: 3, // First hint costs 3 points
+    undoStack: [],
+    redoStack: [],
   }
   
   return gameState
@@ -78,6 +118,10 @@ export function setCellValue(
   }
   
   const newState = { ...state }
+  // push snapshot for undo
+  newState.undoStack = [...state.undoStack, takeSnapshot(state)]
+  // clearing redo stack on new action
+  newState.redoStack = []
   newState.currentGrid = cloneGrid(state.currentGrid)
   
   // Check if valid BEFORE setting the value
@@ -106,6 +150,26 @@ export function setCellValue(
     newState.score += timeBonus
   }
   
+  return newState
+}
+
+export function undo(state: GameState): GameState {
+  if (state.undoStack.length === 0) return state
+  const previous = state.undoStack[state.undoStack.length - 1]!
+  const newUndo = state.undoStack.slice(0, -1)
+  const newState = applySnapshot({ ...state, undoStack: newUndo }, previous)
+  // push current snapshot to redo
+  newState.redoStack = [...state.redoStack, takeSnapshot(state)]
+  return newState
+}
+
+export function redo(state: GameState): GameState {
+  if (state.redoStack.length === 0) return state
+  const nextSnap = state.redoStack[state.redoStack.length - 1]!
+  const newRedo = state.redoStack.slice(0, -1)
+  // push current to undo
+  const newState = applySnapshot({ ...state, redoStack: newRedo }, nextSnap)
+  newState.undoStack = [...state.undoStack, takeSnapshot(state)]
   return newState
 }
 

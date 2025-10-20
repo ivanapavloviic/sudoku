@@ -2,6 +2,7 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { Rank, type MaybeDigit, type Digit } from './features/sudoku/types'
 import { createNewGame, setCellValue, getHint, getCurrentTime, getGameResult, isOriginalCell, getAvailableDigits } from './features/sudoku/gameState'
+import { undo as undoAction, redo as redoAction } from './features/sudoku/gameState'
 import { loadLeaderboard, saveLeaderboard, addToLeaderboard, isLeaderboardWorthy } from './features/sudoku/scoring'
 import { isValidPlacement, isBoxCompleted } from './features/sudoku/validate'
 import type { GameState } from './features/sudoku/gameState'
@@ -269,6 +270,16 @@ const togglePause = () => {
   }
 }
 
+const undo = () => {
+  if (!gameState.value || isPaused.value) return
+  gameState.value = undoAction(gameState.value)
+}
+
+const redo = () => {
+  if (!gameState.value || isPaused.value) return
+  gameState.value = redoAction(gameState.value)
+}
+
 onMounted(() => {
   // Initialize with beginner difficulty
   startNewGame(Rank.Beginner)
@@ -333,9 +344,44 @@ onUnmounted(() => {
 
           <!-- Center Panel -->
           <div class="center-panel w-full">
-            <!-- Level Label above the board -->
-            <div class="level-label px-4 py-1.5 rounded-full bg-primary-700 text-white shadow-sm">
-              <span class="level-text text-sm font-medium">Level: {{ getDifficultyName(gameState.rank) }}</span>
+            <!-- Level + Undo/Redo row -->
+            <div class="w-full grid grid-cols-3 items-center">
+              <div class="flex justify-start">
+                <div class="level-label px-4 py-1.5 rounded-full bg-primary-700 text-white shadow-sm">
+                  <span class="level-text text-sm font-medium">Level: {{ getDifficultyName(gameState.rank) }}</span>
+                </div>
+              </div>
+              <div class="flex justify-center">
+                <button
+                  class="hint-btn inline-flex items-center gap-2 rounded-xl px-4 py-2 font-medium text-white transition shadow-sm active:scale-[.98]"
+                  :class="canUseHint ? 'bg-primary-700 hover:bg-primary-800' : 'bg-slate-300 cursor-not-allowed'"
+                  :disabled="!canUseHint"
+                  @click="useHint"
+                  :title="hintTooltip"
+                >
+                  <span class="hint-icon text-lg">💡</span>
+                  <span class="hint-text">Hint</span>
+                  <span class="hint-cost bg-white/20 rounded px-2 py-0.5 text-sm">-{{ gameState.hintCost }}</span>
+                </button>
+              </div>
+              <div class="flex items-center justify-end gap-2">
+                <button
+                  class="inline-flex items-center justify-center rounded-lg px-3 py-1.5 text-sm font-medium text-white bg-slate-700 hover:bg-slate-800 transition shadow-sm active:scale-[.98] disabled:opacity-50 disabled:cursor-not-allowed"
+                  @click="undo"
+                  :disabled="!gameState || gameState.undoStack.length === 0"
+                  title="Undo"
+                >
+                  ⎌ Undo
+                </button>
+                <button
+                  class="inline-flex items-center justify-center rounded-lg px-3 py-1.5 text-sm font-medium text-white bg-slate-700 hover:bg-slate-800 transition shadow-sm active:scale-[.98] disabled:opacity-50 disabled:cursor-not-allowed"
+                  @click="redo"
+                  :disabled="!gameState || gameState.redoStack.length === 0"
+                  title="Redo"
+                >
+                  ↻ Redo
+                </button>
+              </div>
             </div>
             <div class="board-wrapper w-full flex flex-col items-center gap-6" :class="{ 'is-paused': isPaused }" style="max-width: 100%;">
               <!-- Responsive square area driven by width (max 95vmin) -->

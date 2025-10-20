@@ -31,19 +31,7 @@
       </div>
     </div>
     
-    <div class="hint-section flex justify-center">
-      <button
-        class="hint-btn inline-flex items-center gap-2 rounded-xl px-4 py-2 font-medium text-white transition shadow-sm active:scale-[.98]"
-        :class="canUseHint ? 'bg-primary-700 hover:bg-primary-800' : 'bg-slate-300 cursor-not-allowed'"
-        :disabled="!canUseHint"
-        @click="useHint"
-        :title="hintTooltip"
-      >
-        <span class="hint-icon text-lg">💡</span>
-        <span class="hint-text">Hint</span>
-        <span class="hint-cost bg-white/20 rounded px-2 py-0.5 text-sm">-{{ hintCost }}</span>
-      </button>
-    </div>
+    <!-- hint moved to center header -->
   </div>
 </template>
 
