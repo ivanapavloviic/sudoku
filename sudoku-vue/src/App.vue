@@ -293,7 +293,7 @@ onUnmounted(() => {
       </div>
 
       <!-- Game Interface -->
-      <div v-else-if="!showLeaderboard" class="game-interface w-full bg-surface/90 dark:bg-slate-900/70 backdrop-blur rounded-3xl shadow-lg ring-1 ring-black/5 p-4 md:p-6">
+      <div v-else class="game-interface w-full bg-surface/90 dark:bg-slate-900/70 backdrop-blur rounded-3xl shadow-lg ring-1 ring-black/5 p-4 md:p-6">
         <div class="game-layout">
           <!-- Left Panel -->
           <div class="left-panel">
@@ -362,24 +362,7 @@ onUnmounted(() => {
         </div>
       </div>
 
-      <!-- Leaderboard -->
-      <div v-else class="leaderboard-view">
-        <LeaderboardComponent
-          :leaderboard="leaderboard"
-          @difficulty-changed="(rank: string) => startNewGame(rank)"
-        />
-        <div class="leaderboard-actions">
-          <button class="control-btn inline-flex items-center justify-center rounded-xl px-4 py-2 font-medium text-white bg-primary-700 hover:bg-primary-800 transition shadow-sm active:scale-[.98]" @click="showLeaderboard = false">
-            ← Back to Game
-          </button>
-          <button class="control-btn change-difficulty inline-flex items-center justify-center rounded-xl px-4 py-2 font-medium text-white bg-primary-700 hover:bg-primary-800 transition shadow-sm active:scale-[.98]" @click="showDifficultySelector = true">
-            🔄 Change Level
-          </button>
-          <button class="control-btn new-game inline-flex items-center justify-center rounded-xl px-4 py-2 font-medium text-white bg-emerald-600 hover:bg-emerald-700 transition shadow-sm active:scale-[.98]" @click="resetGame">
-            🆕 New Game
-          </button>
-        </div>
-      </div>
+      
     </main>
 
     <!-- Difficulty Selector Modal -->
@@ -420,6 +403,20 @@ onUnmounted(() => {
         <div class="modal-actions">
           <button class="control-btn" @click="showDifficultySelector = false">
             Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Leaderboard Modal -->
+    <div v-if="showLeaderboard" class="difficulty-modal">
+      <div class="modal-content">
+        <LeaderboardComponent
+          :leaderboard="leaderboard"
+        />
+        <div class="modal-actions mt-6">
+          <button class="control-btn" @click="showLeaderboard = false">
+            Close
           </button>
         </div>
       </div>

@@ -14,7 +14,6 @@
         :disabled="digit.isComplete"
       >
         <span class="digit-number">{{ digit.digit }}</span>
-        <span class="digit-status" v-if="digit.isComplete">✓</span>
       </button>
     </div>
   </div>
@@ -64,14 +63,7 @@ const selectDigit = (digit: Digit) => {
   opacity: 0.5;
 }
 
-.digit-status {
-  position: absolute;
-  top: 2px;
-  right: 2px;
-  font-size: 0.8rem;
-  color: #10b981;
-  font-weight: bold;
-}
+/* removed tick status */
 
 /* Responsive design */
 @media (max-width: 600px) {
