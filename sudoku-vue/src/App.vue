@@ -3,7 +3,7 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { Rank, type MaybeDigit, type Digit } from './features/sudoku/types'
 import { createNewGame, setCellValue, getHint, getCurrentTime, getGameResult, isOriginalCell, getAvailableDigits } from './features/sudoku/gameState'
 import { loadLeaderboard, saveLeaderboard, addToLeaderboard, isLeaderboardWorthy } from './features/sudoku/scoring'
-import { isValidPlacement } from './features/sudoku/validate'
+import { isValidPlacement, isBoxCompleted } from './features/sudoku/validate'
 import type { GameState } from './features/sudoku/gameState'
 import type { Leaderboard } from './features/sudoku/scoring'
 import SudokuBoard from './components/SudokuBoard.vue'
@@ -18,6 +18,7 @@ const selectedCell = ref<{ row: number; col: number } | null>(null)
 const selectedDigit = ref<number | null>(null)
 const conflicts = ref<Array<{ row: number; col: number }>>([])
 const hints = ref<Array<{ row: number; col: number }>>([])
+const completedBoxes = ref<Array<{ row: number; col: number }>>([])
 const leaderboard = ref<Leaderboard>(loadLeaderboard())
 const showLeaderboard = ref(false)
 const showDifficultySelector = ref(false)
@@ -38,10 +39,32 @@ const availableDigits = computed(() => {
 
 const canUseHint = computed(() => {
   if (!gameState.value || !selectedCell.value) return false
-  return gameState.value.hintsUsed < gameState.value.maxHints &&
-         !isOriginalCell(gameState.value, selectedCell.value.row, selectedCell.value.col) &&
-         gameState.value.currentGrid[selectedCell.value.row]?.[selectedCell.value.col] === null
+  
+  // Check if hints are available
+  if (gameState.value.hintsUsed >= gameState.value.maxHints) return false
+  
+  // Check if cell is original (can't hint original cells)
+  if (isOriginalCell(gameState.value, selectedCell.value.row, selectedCell.value.col)) return false
+  
+  // Check if cell is already filled
+  if (gameState.value.currentGrid[selectedCell.value.row]?.[selectedCell.value.col] !== null) return false
+  
+  // Check if has enough score for hint cost
+  if (gameState.value.score < gameState.value.hintCost) return false
+  
+  return true
 })
+
+const isCellInCompletedBox = (row: number, col: number): boolean => {
+  if (!gameState.value) return false
+  
+  const boxRow = Math.floor(row / 3)
+  const boxCol = Math.floor(col / 3)
+  
+  return completedBoxes.value.some(box => 
+    box.row === boxRow && box.col === boxCol
+  )
+}
 
 const startNewGame = (rank: string) => {
   gameState.value = createNewGame(rank as Rank)
@@ -49,6 +72,7 @@ const startNewGame = (rank: string) => {
   selectedDigit.value = null
   conflicts.value = []
   hints.value = []
+  completedBoxes.value = []
   gameCompleted.value = false
   showLeaderboard.value = false
   showDifficultySelector.value = false
@@ -90,11 +114,42 @@ const handleCellInput = (row: number, col: number, value: number | null) => {
     conflicts.value = cellConflicts
   }
   
+  // Check for completed 3x3 boxes
+  checkCompletedBoxes()
+  
   // Check if game is completed
   if (newState.isCompleted) {
     gameCompleted.value = true
     stopTimer()
     handleGameCompletion()
+  }
+}
+
+const checkCompletedBoxes = () => {
+  if (!gameState.value) return
+  
+  const newCompletedBoxes = []
+  for (let boxRow = 0; boxRow < 3; boxRow++) {
+    for (let boxCol = 0; boxCol < 3; boxCol++) {
+      if (isBoxCompleted(gameState.value.currentGrid, boxRow, boxCol)) {
+        newCompletedBoxes.push({ row: boxRow, col: boxCol })
+      }
+    }
+  }
+  
+  // Check if any new boxes were completed
+  const newlyCompleted = newCompletedBoxes.filter(box => 
+    !completedBoxes.value.some(existing => 
+      existing.row === box.row && existing.col === box.col
+    )
+  )
+  
+  if (newlyCompleted.length > 0) {
+    completedBoxes.value = newCompletedBoxes
+    // Trigger animation for newly completed boxes
+    setTimeout(() => {
+      // Animation will be handled by CSS
+    }, 100)
   }
 }
 
@@ -112,6 +167,9 @@ const useHint = () => {
         hints.value = []
       }, 2000)
     }
+    
+    // Check for completed 3x3 boxes after hint
+    checkCompletedBoxes()
     
     // Check if game is completed
     if (hintResult.newState.isCompleted) {
@@ -231,15 +289,16 @@ onUnmounted(() => {
               <span class="level-text">Level: {{ getDifficultyName(gameState.rank) }}</span>
             </div>
             
-            <SudokuBoard
-              :grid="gameState.currentGrid"
-              :original-grid="gameState.originalGrid"
-              :selected-cell="selectedCell"
-              :conflicts="conflicts"
-              :hints="hints"
-              @cell-click="selectCell"
-              @cell-input="handleCellInput"
-            />
+        <SudokuBoard 
+          :grid="gameState.currentGrid"
+          :original-grid="gameState.originalGrid"
+          :selected-cell="selectedCell"
+          :conflicts="conflicts"
+          :hints="hints"
+          :completed-boxes="completedBoxes"
+          @cell-click="selectCell"
+          @cell-input="handleCellInput"
+        />
             
             <!-- Available Digits below the board -->
             <AvailableDigits

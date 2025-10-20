@@ -3,7 +3,7 @@
     <div class="info-section">
       <div class="info-item">
         <div class="info-label">Score</div>
-        <div class="info-value score">{{ formatScore(score) }}</div>
+        <div class="info-value score">{{ score }}</div>
       </div>
       
       <div class="info-item">
@@ -25,6 +25,7 @@
     <div class="hint-section">
       <button 
         class="hint-btn"
+        :class="{ 'disabled': !canUseHint }"
         :disabled="!canUseHint"
         @click="useHint"
         :title="hintTooltip"
@@ -57,10 +58,6 @@ interface Emits {
 const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
-const formatScore = (score: number): string => {
-  return score.toLocaleString()
-}
-
 const formatTime = (seconds: number): string => {
   const minutes = Math.floor(seconds / 60)
   const remainingSeconds = seconds % 60
@@ -75,6 +72,12 @@ const useHint = () => {
 
 const hintTooltip = computed(() => {
   if (!props.canUseHint) {
+    if (props.hintsUsed >= props.maxHints) {
+      return 'No hints remaining (10/10 used)'
+    }
+    if (props.score < props.hintCost) {
+      return `Not enough score (need ${props.hintCost}, have ${props.score})`
+    }
     return 'No hints available'
   }
   return `Use hint (costs ${props.hintCost} points)`
@@ -130,6 +133,7 @@ const hintTooltip = computed(() => {
   color: #F44336;
 }
 
+
 .hint-section {
   display: flex;
   justify-content: center;
@@ -155,11 +159,16 @@ const hintTooltip = computed(() => {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
-.hint-btn:disabled {
+.hint-btn:disabled,
+.hint-btn.disabled {
   background: #ccc;
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
+}
+
+.hint-btn.disabled .hint-cost {
+  color: #ff4444;
 }
 
 .hint-icon {
