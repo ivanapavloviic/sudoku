@@ -1,6 +1,6 @@
 <template>
-  <div class="available-digits bg-surface/90 dark:bg-slate-900/70 backdrop-blur rounded-2xl shadow ring-1 ring-black/5 p-5 w-full max-w-md">
-    <h4 class="text-center text-slate-700 dark:text-slate-200 font-medium mb-4">Available Digits</h4>
+  <div class="available-digits bg-linen-200/90 dark:bg-rose-taupe-800/70 backdrop-blur rounded-2xl shadow-elevation-2 ring-1 ring-rose-taupe-300/20 p-3 w-full max-w-md">
+    <h4 class="text-center text-rose-taupe-700 dark:text-linen-200 font-medium mb-3">Available Digits</h4>
     <div class="digits-grid flex flex-nowrap justify-center gap-2">
       <button
         v-for="digit in digits"
@@ -51,13 +51,13 @@ const selectDigit = (digit: Digit) => {
 
 .digits-grid {}
 
-.digit-btn { border-color: #e5e7eb; background: white; color: #0f172a; font-size: 1.2rem; }
+.digit-btn { border-color: #d1be9c; background: #f9eae1; color: #7d4f50; font-size: 1.2rem; }
 
-.digit-btn:hover:not(:disabled) { border-color: #94a3b8; background-color: #f8fafc; }
+.digit-btn:hover:not(:disabled) { border-color: #aa998f; background-color: #f5dccd; }
 
-.digit-btn.selected { border-color: #3b82f6; background-color: #3b82f6; color: white; }
+.digit-btn.selected { border-color: #cc8b86; background-color: #cc8b86; color: #f9eae1; }
 
-.digit-btn.complete { background-color: #f1f5f9; color: #94a3b8; cursor: not-allowed; border-color: #e2e8f0; }
+.digit-btn.complete { background-color: #f5dccd; color: #aa998f; cursor: not-allowed; border-color: #d1be9c; }
 
 .digit-btn.complete .digit-number {
   opacity: 0.5;

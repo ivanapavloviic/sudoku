@@ -1,11 +1,11 @@
 <template>
   <div class="sudoku-board w-full h-full flex items-center justify-center p-1">
-    <div class="grid-container grid grid-cols-9 gap-px bg-slate-300 rounded-2xl overflow-hidden shadow-lg ring-1 ring-black/10 w-full h-full">
+    <div class="grid-container grid grid-cols-9 gap-px bg-cinereous-300 rounded-2xl overflow-hidden shadow-elevation-2 ring-1 ring-rose-taupe-300/20 w-full h-full">
       <template v-for="(row, rowIndex) in grid" :key="`row-${rowIndex}`">
         <div
           v-for="(cell, colIndex) in row"
           :key="`cell-${rowIndex}-${colIndex}`"
-          class="grid-cell aspect-square bg-white flex items-center justify-center text-[clamp(16px,3vmin,36px)] font-semibold text-slate-800 cursor-pointer transition-colors duration-150 select-none"
+          class="grid-cell aspect-square bg-linen-100 flex items-center justify-center text-[clamp(16px,3vmin,36px)] font-semibold text-rose-taupe-800 cursor-pointer transition-colors duration-150 select-none"
           :class="getCellClasses(rowIndex, colIndex)"
           @click="selectCell(rowIndex, colIndex)"
           @keydown="handleKeydown($event, rowIndex, colIndex)"
@@ -141,60 +141,60 @@ const handleKeydown = (event: KeyboardEvent, row: number, col: number) => {
   animation: rowComplete 0.6s ease-in-out;
 }
 
-.grid-cell { border: 1px solid #e5e7eb; }
+.grid-cell { border: 1px solid #d1be9c; }
 
 .grid-cell:hover {
-  background-color: #f0f8ff;
-  color: #333;
+  background-color: #f9eae1;
+  color: #7d4f50;
 }
 
 .grid-cell.selected {
-  background-color: #4a90e2;
-  color: #333;
+  background-color: #cc8b86;
+  color: #f9eae1;
 }
 
 .grid-cell.original {
-  background-color: #f8fafc;
-  color: #333;
+  background-color: #f5dccd;
+  color: #7d4f50;
   font-weight: 900;
 }
 
 .grid-cell.conflict {
-  background-color: #ff4444;
-  color: #333;
+  background-color: #a45f58;
+  color: #f9eae1;
   animation: conflictPulse 0.5s ease-in-out;
-  border: 2px solid #cc0000;
+  border: 2px solid #7d4f50;
 }
 
 .grid-cell.hint {
-  background-color: #4a90e2;
-  color: #333;
+  background-color: #d1be9c;
+  color: #7d4f50;
   animation: hintGlow 0.8s ease-in-out;
-  border: 2px solid #357abd;
+  border: 2px solid #aa998f;
 }
 
-.grid-cell.box-top { border-top: 3px solid #0f172a; }
-.grid-cell.box-bottom { border-bottom: 3px solid #0f172a; }
-.grid-cell.box-left { border-left: 3px solid #0f172a; }
-.grid-cell.box-right { border-right: 3px solid #0f172a; }
+.grid-cell.box-top { border-top: 3px solid #7d4f50; }
+.grid-cell.box-bottom { border-bottom: 3px solid #7d4f50; }
+.grid-cell.box-left { border-left: 3px solid #7d4f50; }
+.grid-cell.box-right { border-right: 3px solid #7d4f50; }
 
 .grid-cell.completed-box {
-  background: linear-gradient(135deg, #e8f5e8, #d4edda);
+  background: linear-gradient(135deg, #f9eae1, #f5dccd);
   opacity: 0.7;
   animation: boxComplete 1.5s ease-in-out;
-  border: 2px solid #28a745;
-  box-shadow: 0 0 10px rgba(40, 167, 69, 0.3);
+  border: 2px solid #d1be9c;
+  box-shadow: 0 0 10px rgba(209, 190, 156, 0.3);
 }
 
 .grid-cell.completed-box .cell-value {
-  color: #155724;
+  color: #7d4f50;
   font-weight: bold;
 }
 
 .cell-value {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #0f172a;
+  color: #7d4f50;
 }
 
 .cell-placeholder {

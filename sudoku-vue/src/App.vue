@@ -211,6 +211,27 @@ const getDifficultyName = (rank: string): string => {
   return names[rank] || 'Unknown'
 }
 
+const getLevelColorClasses = (rank: string): string => {
+  const colors: Record<string, string> = {
+    [Rank.Beginner]: 'bg-linen-300 text-rose-taupe-800 border-linen-400 shadow-linen-400/20',
+    [Rank.Intermediate]: 'bg-dun-300 text-rose-taupe-800 border-dun-400 shadow-dun-400/20',
+    [Rank.Hard]: 'bg-old-rose-300 text-linen-100 border-old-rose-400 shadow-old-rose-400/20',
+    [Rank.Expert]: 'bg-rose-taupe-600 text-linen-100 border-rose-taupe-700 shadow-rose-taupe-400/20',
+  }
+  return colors[rank] || 'bg-cinereous-300 text-rose-taupe-800 border-cinereous-400 shadow-cinereous-400/20'
+}
+
+
+const getLevelTextColor = (rank: string): string => {
+  const textColors: Record<string, string> = {
+    [Rank.Beginner]: 'text-rose-taupe-800',
+    [Rank.Intermediate]: 'text-rose-taupe-800',
+    [Rank.Hard]: 'text-linen-100',
+    [Rank.Expert]: 'text-linen-100',
+  }
+  return textColors[rank] || 'text-rose-taupe-800'
+}
+
 const handleGameCompletion = () => {
   if (!gameState.value) return
   
@@ -312,12 +333,16 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="app min-h-screen bg-background dark:bg-slate-900 text-slate-800 dark:text-slate-100 selection:bg-black selection:text-white">
-    <header class="app-header text-center max-w-5xl mx-auto py-2 md:py-3">
-      <h1 class="text-2xl md:text-3xl font-semibold tracking-tight text-slate-900 dark:text-white">Sudoku Game</h1>
-    </header>
+  <div class="app min-h-screen bg-gradient-to-br from-dun-100 via-cinereous-100 to-rose-taupe-100 dark:from-rose-taupe-800 dark:via-cinereous-700 dark:to-old-rose-800 text-rose-taupe-800 dark:text-linen-100 selection:bg-rose-taupe-600 selection:text-linen-100 relative overflow-hidden">
+    <!-- Background Pattern -->
+    <div class="absolute inset-0 bg-gradient-to-br from-dun-50/40 via-cinereous-50/30 to-rose-taupe-50/20 dark:from-rose-taupe-800/30 dark:via-cinereous-700/20 dark:to-old-rose-700/15"></div>
+    <div class="absolute inset-0 opacity-30 dark:opacity-15">
+      <div class="absolute top-8 left-8 w-28 h-28 bg-dun-200/30 dark:bg-dun-600/20 rounded-full blur-xl"></div>
+      <div class="absolute top-1/3 right-16 w-20 h-20 bg-cinereous-200/25 dark:bg-cinereous-500/15 rounded-full blur-lg"></div>
+      <div class="absolute bottom-16 left-1/4 w-36 h-36 bg-rose-taupe-200/20 dark:bg-rose-taupe-500/10 rounded-full blur-2xl"></div>
+    </div>
 
-    <main class="app-main w-full max-w-none mx-auto px-2 md:px-4">
+    <main class="app-main w-full max-w-none mx-auto px-1.5 md:px-3 relative z-10">
       <!-- Difficulty Selection -->
       <div v-if="!gameState" class="game-setup">
         <DifficultySelector 
@@ -325,16 +350,16 @@ onUnmounted(() => {
           @difficulty-selected="startNewGame"
         />
         <div class="setup-actions">
-          <button class="control-btn change-difficulty" @click="showDifficultySelector = true">
-            🔄 Change Level
+          <button class="control-btn change-difficulty inline-flex items-center justify-center rounded-lg px-4 py-2 text-base font-medium text-linen-100 bg-dun-600 hover:bg-dun-700 transition shadow-elevation-1 active:scale-[.98]" @click="showDifficultySelector = true">
+            Change Level
           </button>
         </div>
       </div>
 
       <!-- Game Interface -->
-      <div v-else class="game-interface w-full bg-surface/90 dark:bg-slate-900/70 backdrop-blur rounded-3xl shadow-lg ring-1 ring-black/5 p-2 md:p-4">
+      <div v-else class="game-interface w-full bg-linen-200/90 dark:bg-rose-taupe-800/70 backdrop-blur rounded-3xl shadow-elevation-2 ring-1 ring-rose-taupe-300/20">
         <!-- Score/Time Box - Full width at top -->
-        <div class="w-full mb-4">
+        <div class="w-full">
           <GameInfo
             :score="gameState.score"
             :time-elapsed="currentTime"
@@ -350,20 +375,20 @@ onUnmounted(() => {
         </div>
 
         <!-- Main Game Layout - 2/3 Sudoku, 1/3 Controls -->
-        <div class="game-layout flex flex-row gap-4 min-h-[calc(100vh-16rem)]">
+        <div class="game-layout flex flex-row gap-3 min-h-[calc(100vh-14rem)]">
           <!-- Left Panel - Sudoku (2/3) -->
           <div class="flex flex-col items-center justify-center w-2/3">
             <!-- Level + Controls row -->
-            <div class="w-full grid grid-cols-1 sm:grid-cols-3 items-center gap-2 mb-4">
+            <div class="w-full grid grid-cols-1 sm:grid-cols-3 items-center gap-2">
               <div class="flex justify-center sm:justify-start">
-                <div class="level-label px-3 py-1 rounded-full bg-primary-700 text-white shadow-sm text-xs sm:text-sm">
-                  <span class="level-text font-medium">Level: {{ getDifficultyName(gameState.rank) }}</span>
+                <div class="level-label px-3 py-1.5 rounded-full shadow-elevation-1 text-xs sm:text-sm border" :class="getLevelColorClasses(gameState.rank)">
+                  <span class="level-text font-medium" :class="getLevelTextColor(gameState.rank)">Level: {{ getDifficultyName(gameState.rank) }}</span>
                 </div>
               </div>
               <div class="flex justify-center">
                 <button
-                  class="hint-btn inline-flex items-center gap-1 sm:gap-2 rounded-lg sm:rounded-xl px-2 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-white transition shadow-sm active:scale-[.98]"
-                  :class="canUseHint ? 'bg-primary-700 hover:bg-primary-800' : 'bg-slate-300 cursor-not-allowed'"
+                  class="hint-btn inline-flex items-center gap-1 sm:gap-2 rounded-lg sm:rounded-xl px-3 py-1.5 text-xs sm:text-sm font-medium transition shadow-elevation-1 active:scale-[.98] min-h-[32px]"
+                  :class="canUseHint ? 'text-linen-100 bg-rose-taupe-600 hover:bg-rose-taupe-700' : 'text-cinereous-400 bg-transparent cursor-not-allowed'"
                   :disabled="!canUseHint"
                   @click="useHint"
                   :title="hintTooltip"
@@ -375,7 +400,7 @@ onUnmounted(() => {
               </div>
               <div class="flex items-center justify-center sm:justify-end gap-1 sm:gap-2">
                 <button
-                  class="inline-flex items-center justify-center rounded-lg px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm font-medium text-white bg-slate-700 hover:bg-slate-800 transition shadow-sm active:scale-[.98] disabled:opacity-50 disabled:cursor-not-allowed"
+                  class="inline-flex items-center justify-center rounded-lg px-3 py-1.5 text-xs sm:text-sm font-medium text-linen-100 bg-cinereous-600 hover:bg-cinereous-700 transition shadow-elevation-1 active:scale-[.98] disabled:opacity-50 disabled:cursor-not-allowed min-h-[32px]"
                   @click="undo"
                   :disabled="!gameState || gameState.undoStack.length === 0"
                   title="Undo"
@@ -384,7 +409,7 @@ onUnmounted(() => {
                   <span class="sm:hidden">⎌</span>
                 </button>
                 <button
-                  class="inline-flex items-center justify-center rounded-lg px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm font-medium text-white bg-slate-700 hover:bg-slate-800 transition shadow-sm active:scale-[.98] disabled:opacity-50 disabled:cursor-not-allowed"
+                  class="inline-flex items-center justify-center rounded-lg px-3 py-1.5 text-xs sm:text-sm font-medium text-linen-100 bg-cinereous-600 hover:bg-cinereous-700 transition shadow-elevation-1 active:scale-[.98] disabled:opacity-50 disabled:cursor-not-allowed min-h-[32px]"
                   @click="redo"
                   :disabled="!gameState || gameState.redoStack.length === 0"
                   title="Redo"
@@ -396,7 +421,7 @@ onUnmounted(() => {
             </div>
             
             <!-- Board Area -->
-            <div class="board-wrapper w-full flex flex-col items-center gap-2" :class="{ 'is-paused': isPaused }">
+            <div class="board-wrapper w-full flex flex-col items-center gap-1.5" :class="{ 'is-paused': isPaused }">
               <!-- Responsive square area -->
               <div class="board-size relative w-full max-w-[min(90vw,90vh)] sm:max-w-[min(80vw,80vh)] md:max-w-[min(70vw,70vh)] lg:max-w-[min(60vw,60vh)] aspect-square">
                 <div class="board-content w-full h-full" :class="{ paused: isPaused }">
@@ -430,11 +455,11 @@ onUnmounted(() => {
 
           <!-- Right Panel - Game Controls (1/3) -->
           <div class="w-1/3 flex-shrink-0">
-            <div class="space-y-4 h-full flex flex-col justify-start">
-              <button class="control-btn change-difficulty w-full inline-flex items-center justify-center rounded-lg px-4 py-4 text-base font-medium text-white bg-primary-700 hover:bg-primary-800 transition shadow-sm active:scale-[.98]" @click="showDifficultySelector = true">
-                🔄 Change Level
+            <div class="space-y-3 h-full flex flex-col justify-start">
+              <button class="control-btn change-difficulty w-full inline-flex items-center justify-center rounded-lg px-3.5 py-3.5 text-base font-medium text-linen-100 bg-dun-600 hover:bg-dun-700 transition shadow-elevation-1 active:scale-[.98]" @click="showDifficultySelector = true">
+                Change Level
               </button>
-              <button class="control-btn leaderboard w-full inline-flex items-center justify-center rounded-lg px-4 py-4 text-base font-medium text-white bg-amber-500 hover:bg-amber-600 transition shadow-sm active:scale-[.98]" @click="showLeaderboard = true">
+              <button class="control-btn leaderboard w-full inline-flex items-center justify-center rounded-lg px-3.5 py-3.5 text-base font-medium text-linen-100 bg-old-rose-600 hover:bg-old-rose-700 transition shadow-elevation-1 active:scale-[.98]" @click="showLeaderboard = true">
                 🏆 Leaderboard
               </button>
             </div>
@@ -447,41 +472,41 @@ onUnmounted(() => {
 
     <!-- Difficulty Selector Modal -->
     <div v-if="showDifficultySelector" class="difficulty-modal">
-      <div class="modal-content text-slate-900">
-        <h2 class="text-primary-700">🎯 Change Difficulty Level</h2>
-        <p class="text-slate-700">Select a new difficulty level for your Sudoku game:</p>
+      <div class="modal-content text-rose-taupe-800">
+        <h2 class="text-rose-taupe-700">Change Difficulty Level</h2>
+        <p class="text-rose-taupe-600">Select a new difficulty level for your Sudoku game:</p>
         <div class="difficulty-options">
           <button 
             class="difficulty-btn beginner" 
             @click="startNewGame(Rank.Beginner)"
           >
-            <span class="difficulty-name text-slate-900">Easy</span>
-            <span class="difficulty-desc text-slate-600">36-40 cells visible</span>
+            <span class="difficulty-name text-rose-taupe-800">Easy</span>
+            <span class="difficulty-desc text-rose-taupe-600">36-40 cells visible</span>
           </button>
           <button 
             class="difficulty-btn intermediate" 
             @click="startNewGame(Rank.Intermediate)"
           >
-            <span class="difficulty-name text-slate-900">Medium</span>
-            <span class="difficulty-desc text-slate-600">32-36 cells visible</span>
+            <span class="difficulty-name text-rose-taupe-800">Medium</span>
+            <span class="difficulty-desc text-rose-taupe-600">32-36 cells visible</span>
           </button>
           <button 
             class="difficulty-btn hard" 
             @click="startNewGame(Rank.Hard)"
           >
-            <span class="difficulty-name text-slate-900">Hard</span>
-            <span class="difficulty-desc text-slate-600">28-32 cells visible</span>
+            <span class="difficulty-name text-rose-taupe-800">Hard</span>
+            <span class="difficulty-desc text-rose-taupe-600">28-32 cells visible</span>
           </button>
           <button 
             class="difficulty-btn expert" 
             @click="startNewGame(Rank.Expert)"
           >
-            <span class="difficulty-name text-slate-900">Expert</span>
-            <span class="difficulty-desc text-slate-600">24-28 cells visible</span>
+            <span class="difficulty-name text-rose-taupe-800">Expert</span>
+            <span class="difficulty-desc text-rose-taupe-600">24-28 cells visible</span>
           </button>
         </div>
         <div class="modal-actions">
-          <button class="control-btn" @click="showDifficultySelector = false">
+          <button class="control-btn inline-flex items-center justify-center rounded-lg px-4 py-2 text-base font-medium text-linen-100 bg-cinereous-600 hover:bg-cinereous-700 transition shadow-elevation-1 active:scale-[.98]" @click="showDifficultySelector = false">
             Cancel
           </button>
         </div>
@@ -495,7 +520,7 @@ onUnmounted(() => {
           :leaderboard="leaderboard"
         />
         <div class="modal-actions mt-6">
-          <button class="control-btn" @click="showLeaderboard = false">
+          <button class="control-btn inline-flex items-center justify-center rounded-lg px-4 py-2 text-base font-medium text-linen-100 bg-cinereous-600 hover:bg-cinereous-700 transition shadow-elevation-1 active:scale-[.98]" @click="showLeaderboard = false">
             Close
           </button>
         </div>
@@ -522,13 +547,13 @@ onUnmounted(() => {
           </div>
         </div>
         <div class="modal-actions">
-          <button class="control-btn" @click="showLeaderboard = true">
+          <button class="control-btn inline-flex items-center justify-center rounded-lg px-4 py-2 text-base font-medium text-linen-100 bg-old-rose-600 hover:bg-old-rose-700 transition shadow-elevation-1 active:scale-[.98]" @click="showLeaderboard = true">
             View Leaderboard
           </button>
-          <button class="control-btn change-difficulty" @click="showDifficultySelector = true">
-            🔄 Change Level
+          <button class="control-btn change-difficulty inline-flex items-center justify-center rounded-lg px-4 py-2 text-base font-medium text-linen-100 bg-dun-600 hover:bg-dun-700 transition shadow-elevation-1 active:scale-[.98]" @click="showDifficultySelector = true">
+            Change Level
           </button>
-          <button class="control-btn new-game" @click="resetGame">
+          <button class="control-btn new-game inline-flex items-center justify-center rounded-lg px-4 py-2 text-base font-medium text-linen-100 bg-rose-taupe-600 hover:bg-rose-taupe-700 transition shadow-elevation-1 active:scale-[.98]" @click="resetGame">
             Play Again
           </button>
         </div>
@@ -645,19 +670,7 @@ onUnmounted(() => {
   opacity: 0.9;
 }
 
-.level-label {
-  background: #4a90e2;
-  color: white;
-  padding: 8px 20px;
-  border-radius: 20px;
-  font-weight: bold;
-  font-size: 1.1rem;
-  box-shadow: 0 2px 8px rgba(74, 144, 226, 0.3);
-}
 
-.level-text {
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
-}
 
 .game-controls {
   display: flex;
@@ -665,48 +678,6 @@ onUnmounted(() => {
   gap: 10px;
 }
 
-.control-btn {
-  background: #4a90e2;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 12px 20px;
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  text-align: center;
-}
-
-.control-btn:hover {
-  background: #357abd;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-.control-btn.new-game {
-  background: #4CAF50;
-}
-
-.control-btn.new-game:hover {
-  background: #45a049;
-}
-
-.control-btn.leaderboard {
-  background: #FF9800;
-}
-
-.control-btn.leaderboard:hover {
-  background: #f57c00;
-}
-
-.control-btn.change-difficulty {
-  background: #9C27B0;
-}
-
-.control-btn.change-difficulty:hover {
-  background: #7B1FA2;
-}
 
 .leaderboard-view {
   display: flex;
@@ -727,7 +698,7 @@ onUnmounted(() => {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(125, 79, 80, 0.8);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -740,7 +711,7 @@ onUnmounted(() => {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(125, 79, 80, 0.8);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -748,16 +719,16 @@ onUnmounted(() => {
 }
 
 .modal-content {
-  background: white;
+  background: #f9eae1;
   border-radius: 16px;
   padding: 40px;
   text-align: center;
   max-width: 500px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 20px 40px rgba(125, 79, 80, 0.3);
 }
 
 .modal-content h2 {
-  color: #4CAF50;
+  color: #7d4f50;
   margin: 0 0 20px 0;
   font-size: 2rem;
 }
@@ -797,8 +768,8 @@ onUnmounted(() => {
 }
 
 .difficulty-btn {
-  background: white;
-  border: 2px solid #e0e0e0;
+  background: #f9eae1;
+  border: 2px solid #d1be9c;
   border-radius: 12px;
   padding: 20px;
   cursor: pointer;
@@ -811,43 +782,44 @@ onUnmounted(() => {
 
 .difficulty-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px rgba(125, 79, 80, 0.15);
+  border-color: #cc8b86;
 }
 
 .difficulty-btn.beginner {
-  border-color: #4CAF50;
+  border-color: #d1be9c;
 }
 
 .difficulty-btn.beginner:hover {
-  background: #4CAF50;
-  color: white;
+  background: #d1be9c;
+  color: #7d4f50;
 }
 
 .difficulty-btn.intermediate {
-  border-color: #FF9800;
+  border-color: #aa998f;
 }
 
 .difficulty-btn.intermediate:hover {
-  background: #FF9800;
-  color: white;
+  background: #aa998f;
+  color: #f9eae1;
 }
 
 .difficulty-btn.hard {
-  border-color: #F44336;
+  border-color: #cc8b86;
 }
 
 .difficulty-btn.hard:hover {
-  background: #F44336;
-  color: white;
+  background: #cc8b86;
+  color: #f9eae1;
 }
 
 .difficulty-btn.expert {
-  border-color: #9C27B0;
+  border-color: #7d4f50;
 }
 
 .difficulty-btn.expert:hover {
-  background: #9C27B0;
-  color: white;
+  background: #7d4f50;
+  color: #f9eae1;
 }
 
 .difficulty-name {

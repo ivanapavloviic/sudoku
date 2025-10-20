@@ -1,42 +1,139 @@
 /** @type {import('tailwindcss').Config} */
-module.exports = {
-  content: [
-    './index.html',
-    './src/**/*.{vue,js,ts,jsx,tsx}',
-  ],
-  theme: {
-    extend: {
-      colors: {
-        primary: {
-          50: '#f1f5fe', 100: '#e3ebfd', 200: '#c6d7fb', 300: '#a2bcf7', 400: '#7c9cf1', 500: '#5b7eea', 600: '#4964d8', 700: '#3c50b3', 800: '#344491', 900: '#2e3c76'
-        },
-        secondary: {
-          50: '#f4f7f9', 100: '#e9eff3', 200: '#cad6e1', 300: '#a9bdcf', 400: '#7b97b1', 500: '#5d7b98', 600: '#4d667f', 700: '#405568', 800: '#364757', 900: '#2f3d4a'
-        },
-        surface: '#ffffff',
-        background: '#f5f6f8',
-      },
-      boxShadow: {
-        sm2: '0 1px 2px rgba(0,0,0,0.06), 0 1px 1px rgba(0,0,0,0.04)',
-        md2: '0 4px 12px rgba(0,0,0,0.08)',
-        lg2: '0 12px 28px rgba(0,0,0,0.12)',
-      },
-      borderRadius: {
-        xl2: '1rem',
-      },
-    },
-  },
-  plugins: [],
-}
-
-/** @type {import('tailwindcss').Config} */
 export default {
   content: [
     './index.html',
     './src/**/*.{vue,ts,tsx,js,jsx}',
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        // Custom palette - warm, earthy tones
+        'old-rose': {
+          DEFAULT: '#cc8b86',
+          50: '#f9eae1',
+          100: '#f2d5c7',
+          200: '#e8b8a8',
+          300: '#de9b89',
+          400: '#d47e6a',
+          500: '#cc8b86',
+          600: '#b8756f',
+          700: '#a45f58',
+          800: '#904941',
+          900: '#7d4f50',
+        },
+        'linen': {
+          DEFAULT: '#f9eae1',
+          50: '#fefcfb',
+          100: '#fdf8f5',
+          200: '#fbf1eb',
+          300: '#f9eae1',
+          400: '#f7e3d7',
+          500: '#f5dccd',
+          600: '#f3d5c3',
+          700: '#f1ceb9',
+          800: '#efc7af',
+          900: '#edc0a5',
+        },
+        'rose-taupe': {
+          DEFAULT: '#7d4f50',
+          50: '#f9eae1',
+          100: '#f2d5c7',
+          200: '#e8b8a8',
+          300: '#de9b89',
+          400: '#d47e6a',
+          500: '#b8756f',
+          600: '#a45f58',
+          700: '#904941',
+          800: '#7c332a',
+          900: '#7d4f50',
+        },
+        'dun': {
+          DEFAULT: '#d1be9c',
+          50: '#f9f7f3',
+          100: '#f3efe7',
+          200: '#e7dfd1',
+          300: '#dbcfbb',
+          400: '#cfbfa5',
+          500: '#d1be9c',
+          600: '#c5b393',
+          700: '#b9a88a',
+          800: '#ad9d81',
+          900: '#a19278',
+        },
+        'cinereous': {
+          DEFAULT: '#aa998f',
+          50: '#f5f4f2',
+          100: '#ebe9e5',
+          200: '#d7d3cd',
+          300: '#c3bdb5',
+          400: '#afa79d',
+          500: '#aa998f',
+          600: '#9e8d83',
+          700: '#928177',
+          800: '#86756b',
+          900: '#7a695f',
+        },
+        // Primary colors using old-rose palette
+        primary: {
+          50: '#f9eae1',
+          100: '#f2d5c7',
+          200: '#e8b8a8',
+          300: '#de9b89',
+          400: '#d47e6a',
+          500: '#cc8b86',
+          600: '#b8756f',
+          700: '#a45f58',
+          800: '#904941',
+          900: '#7d4f50',
+        },
+        // Secondary colors using dun palette
+        secondary: {
+          50: '#f9f7f3',
+          100: '#f3efe7',
+          200: '#e7dfd1',
+          300: '#dbcfbb',
+          400: '#cfbfa5',
+          500: '#d1be9c',
+          600: '#c5b393',
+          700: '#b9a88a',
+          800: '#ad9d81',
+          900: '#a19278',
+        },
+        // Surface colors using linen palette
+        surface: {
+          50: '#fefcfb',
+          100: '#fdf8f5',
+          200: '#fbf1eb',
+          300: '#f9eae1',
+          400: '#f7e3d7',
+          500: '#f5dccd',
+          600: '#f3d5c3',
+          700: '#f1ceb9',
+          800: '#efc7af',
+          900: '#edc0a5',
+        },
+        // Background using linen
+        background: {
+          50: '#fefcfb',
+          100: '#fdf8f5',
+          200: '#fbf1eb',
+          300: '#f9eae1',
+          400: '#f7e3d7',
+          500: '#f5dccd',
+          600: '#f3d5c3',
+          700: '#f1ceb9',
+          800: '#efc7af',
+          900: '#edc0a5',
+        },
+      },
+      boxShadow: {
+        'elevation-1': '0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)',
+        'elevation-2': '0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)',
+        'elevation-3': '0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23)',
+        'elevation-4': '0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)',
+        'elevation-5': '0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22)',
+      },
+    },
   },
   plugins: [],
 }

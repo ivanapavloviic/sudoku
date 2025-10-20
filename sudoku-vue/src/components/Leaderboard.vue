@@ -1,13 +1,13 @@
 <template>
-  <div class="leaderboard bg-surface/90 dark:bg-slate-900/70 backdrop-blur rounded-2xl shadow ring-1 ring-black/5 p-6 w-full max-w-lg mx-auto">
-    <h3 class="text-center text-2xl font-semibold text-slate-800 dark:text-slate-100 mb-5">🏆 Leaderboard</h3>
+  <div class="leaderboard bg-linen-200/90 dark:bg-rose-taupe-800/70 backdrop-blur rounded-2xl shadow-elevation-2 ring-1 ring-rose-taupe-300/20 p-6 w-full max-w-lg mx-auto">
+    <h3 class="text-center text-2xl font-semibold text-rose-taupe-800 dark:text-linen-100 mb-5">🏆 Leaderboard</h3>
     
-    <div class="difficulty-tabs flex gap-2 mb-5 bg-slate-100 dark:bg-slate-800 rounded-xl p-1">
+    <div class="difficulty-tabs flex gap-2 mb-5 bg-rose-taupe-100 dark:bg-rose-taupe-700 rounded-xl p-1">
       <button
         v-for="(rank, key) in Rank"
         :key="key"
         class="tab-btn flex-1 rounded-lg px-3 py-2 text-sm font-medium transition"
-        :class="{ active: selectedDifficulty === rank }"
+        :class="getTabButtonClasses(rank, selectedDifficulty === rank)"
         @click="selectDifficulty(rank)"
       >
         {{ getDifficultyName(rank) }}
@@ -15,16 +15,16 @@
     </div>
     
     <div class="leaderboard-content">
-      <div v-if="currentEntries.length === 0" class="no-entries text-center py-10 text-slate-600">
-        <p>No records yet. Be the first to complete a {{ selectedDifficulty }} game!</p>
+      <div v-if="currentEntries.length === 0" class="no-entries text-center py-10">
+        <p class="text-rose-taupe-800 text-lg font-medium">No records yet. Be the first to complete a {{ selectedDifficulty }} game!</p>
       </div>
       
       <div v-else class="entries-list flex flex-col gap-3">
         <div
           v-for="(entry, index) in currentEntries"
           :key="entry.id"
-          class="leaderboard-entry flex items-center gap-4 p-4 rounded-xl bg-slate-50 transition hover:-translate-y-0.5 hover:bg-slate-100"
-          :class="`rank-${index + 1}`"
+          class="leaderboard-entry flex items-center gap-4 p-4 rounded-xl transition hover:-translate-y-0.5"
+          :class="getRankClasses(index + 1)"
         >
           <div class="rank-badge text-xl min-w-[30px] text-center">
             <span v-if="index === 0">🥇</span>
@@ -34,13 +34,13 @@
           </div>
           
           <div class="entry-info flex-1">
-            <div class="entry-score text-xl font-semibold text-slate-800">{{ formatScore(entry.score) }}</div>
-            <div class="entry-details flex gap-4 text-xs text-slate-600 opacity-90 mb-1">
+            <div class="entry-score text-xl font-semibold text-rose-taupe-800">{{ formatScore(entry.score) }}</div>
+            <div class="entry-details flex gap-4 text-xs text-rose-taupe-600 mb-1">
               <span class="entry-time">{{ formatTime(entry.timeElapsed) }}</span>
               <span class="entry-hints">{{ entry.hintsUsed }} hints</span>
               <span class="entry-errors">{{ entry.errorsCount }} errors</span>
             </div>
-            <div class="entry-date text-[0.7rem] text-slate-500">{{ formatDate(entry.date) }}</div>
+            <div class="entry-date text-[0.7rem] text-rose-taupe-500">{{ formatDate(entry.date) }}</div>
           </div>
         </div>
       </div>
@@ -94,6 +94,26 @@ const formatDate = (dateString: string): string => {
     year: 'numeric'
   })
 }
+
+const getTabButtonClasses = (_rank: string, isActive: boolean): string => {
+  if (isActive) {
+    return 'bg-linen-200 text-rose-taupe-800 shadow-sm'
+  } else {
+    return 'bg-transparent text-rose-taupe-600 hover:bg-linen-100 hover:text-rose-taupe-800'
+  }
+}
+
+const getRankClasses = (rank: number): string => {
+  if (rank === 1) {
+    return 'bg-gradient-to-r from-linen-200 to-dun-200 hover:from-linen-300 hover:to-dun-300'
+  } else if (rank === 2) {
+    return 'bg-gradient-to-r from-dun-100 to-cinereous-100 hover:from-dun-200 hover:to-cinereous-200'
+  } else if (rank === 3) {
+    return 'bg-gradient-to-r from-cinereous-100 to-old-rose-100 hover:from-cinereous-200 hover:to-old-rose-200'
+  } else {
+    return 'bg-linen-100 hover:bg-linen-200'
+  }
+}
 </script>
 
 <style scoped>
@@ -103,11 +123,6 @@ const formatDate = (dateString: string): string => {
 
 .difficulty-tabs {}
 
-.tab-btn { border: none; color: #64748b; }
-
-.tab-btn.active { background: white; color: #0f172a; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-
-.tab-btn:hover { color: #0f172a; }
 
 .no-entries {}
 
@@ -117,20 +132,6 @@ const formatDate = (dateString: string): string => {
 
 .leaderboard-entry:hover {}
 
-.leaderboard-entry.rank-1 {
-  background: linear-gradient(135deg, #FFD700, #FFA500);
-  color: #333;
-}
-
-.leaderboard-entry.rank-2 {
-  background: linear-gradient(135deg, #C0C0C0, #A0A0A0);
-  color: #333;
-}
-
-.leaderboard-entry.rank-3 {
-  background: linear-gradient(135deg, #CD7F32, #B8860B);
-  color: #333;
-}
 
 .rank-badge {}
 
