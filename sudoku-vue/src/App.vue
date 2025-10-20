@@ -304,12 +304,11 @@ onUnmounted(() => {
 
 <template>
   <div class="app min-h-screen bg-background dark:bg-slate-900 text-slate-800 dark:text-slate-100 selection:bg-black selection:text-white">
-    <header class="app-header text-center max-w-5xl mx-auto py-6 md:py-10">
-      <h1 class="text-4xl md:text-5xl font-semibold tracking-tight text-slate-900 dark:text-white">🧩 Sudoku Game</h1>
-      <p class="mt-2 text-slate-600 dark:text-slate-300">Challenge your mind with the classic number puzzle</p>
+    <header class="app-header text-center max-w-5xl mx-auto py-2 md:py-3">
+      <h1 class="text-2xl md:text-3xl font-semibold tracking-tight text-slate-900 dark:text-white">Sudoku Game</h1>
     </header>
 
-    <main class="app-main w-full max-w-none mx-auto px-4 md:px-6">
+    <main class="app-main w-full max-w-none mx-auto px-2 md:px-4">
       <!-- Difficulty Selection -->
       <div v-if="!gameState" class="game-setup">
         <DifficultySelector 
@@ -324,8 +323,8 @@ onUnmounted(() => {
       </div>
 
       <!-- Game Interface -->
-      <div v-else class="game-interface w-full bg-surface/90 dark:bg-slate-900/70 backdrop-blur rounded-3xl shadow-lg ring-1 ring-black/5 p-4 md:p-6">
-        <div class="game-layout">
+      <div v-else class="game-interface w-full bg-surface/90 dark:bg-slate-900/70 backdrop-blur rounded-3xl shadow-lg ring-1 ring-black/5 p-2 md:p-4">
+        <div class="game-layout gap-4">
           <!-- Left Panel -->
           <div class="left-panel">
             <GameInfo
@@ -383,7 +382,7 @@ onUnmounted(() => {
                 </button>
               </div>
             </div>
-            <div class="board-wrapper w-full flex flex-col items-center gap-6" :class="{ 'is-paused': isPaused }" style="max-width: 100%;">
+             <div class="board-wrapper w-full flex flex-col items-center gap-3" :class="{ 'is-paused': isPaused }" style="max-width: 100%;">
               <!-- Responsive square area driven by width (max 95vmin) -->
               <div class="board-size relative w-full max-w-[min(92vmin,1100px)] aspect-square md:max-w-[min(95vmin,1200px)] lg:max-w-[min(98vmin,1300px)]">
                 <div class="board-content absolute inset-0" :class="{ paused: isPaused }">
