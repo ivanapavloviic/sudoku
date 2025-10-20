@@ -230,6 +230,14 @@ const stopTimer = () => {
   }
 }
 
+const pauseGame = () => {
+  if (!gameState.value) return
+  if (isPaused.value) return
+  isPaused.value = true
+  stopTimer()
+  pauseStartedAt.value = Date.now()
+}
+
 const resetGame = () => {
   stopTimer()
   gameState.value = null
@@ -264,10 +272,22 @@ const togglePause = () => {
 onMounted(() => {
   // Initialize with beginner difficulty
   startNewGame(Rank.Beginner)
+  const handleVisibility = () => {
+    if (document.hidden) {
+      pauseGame()
+    }
+  }
+  document.addEventListener('visibilitychange', handleVisibility)
+  ;(window as any).__sudokuVisibilityHandler = handleVisibility
 })
 
 onUnmounted(() => {
   stopTimer()
+  const handler = (window as any).__sudokuVisibilityHandler
+  if (handler) {
+    document.removeEventListener('visibilitychange', handler)
+    ;(window as any).__sudokuVisibilityHandler = undefined
+  }
 })
 </script>
 
