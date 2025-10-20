@@ -67,3 +67,29 @@ export function isSolved(grid: Grid): boolean {
   }
   return true
 }
+
+export function isBoxCompleted(grid: Grid, boxRow: number, boxCol: number): boolean {
+  const { r: r0, c: c0 } = boxTopLeft(boxRow * BOX_SIZE, boxCol * BOX_SIZE)
+  
+  // Check if all cells in the box are filled
+  for (let i = 0; i < BOX_SIZE; i++) {
+    for (let j = 0; j < BOX_SIZE; j++) {
+      if (grid[r0 + i]?.[c0 + j] === null) {
+        return false
+      }
+    }
+  }
+  
+  // Check if all digits 1-9 are present in the box
+  const digits = new Set<Digit>()
+  for (let i = 0; i < BOX_SIZE; i++) {
+    for (let j = 0; j < BOX_SIZE; j++) {
+      const value = grid[r0 + i]?.[c0 + j] as Digit
+      if (value) {
+        digits.add(value)
+      }
+    }
+  }
+  
+  return digits.size === 9
+}
