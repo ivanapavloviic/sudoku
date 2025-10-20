@@ -8,7 +8,12 @@
       
       <div class="info-item">
         <div class="info-label">Time</div>
-        <div class="info-value time">{{ formatTime(timeElapsed) }}</div>
+        <div class="time-row">
+          <div class="info-value time">{{ formatTime(timeElapsed) }}</div>
+          <button class="pause-btn" :class="{ resume: isPaused }" @click="togglePause">
+            {{ isPaused ? 'Resume' : 'Pause' }}
+          </button>
+        </div>
       </div>
       
       <div class="info-item">
@@ -49,10 +54,12 @@ interface Props {
   errorsCount: number
   hintCost: number
   canUseHint: boolean
+  isPaused: boolean
 }
 
 interface Emits {
   (e: 'use-hint'): void
+  (e: 'toggle-pause'): void
 }
 
 const props = defineProps<Props>()
@@ -68,6 +75,10 @@ const useHint = () => {
   if (props.canUseHint) {
     emit('use-hint')
   }
+}
+
+const togglePause = () => {
+  emit('toggle-pause')
 }
 
 const hintTooltip = computed(() => {
@@ -102,6 +113,13 @@ const hintTooltip = computed(() => {
 
 .info-item {
   text-align: center;
+}
+
+.time-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
 }
 
 .info-label {
@@ -169,6 +187,29 @@ const hintTooltip = computed(() => {
 
 .hint-btn.disabled .hint-cost {
   color: #ff4444;
+}
+
+.pause-btn {
+  background: #607d8b;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.pause-btn:hover {
+  background: #546e7a;
+}
+
+.pause-btn.resume {
+  background: #4CAF50;
+}
+
+.pause-btn.resume:hover {
+  background: #43a047;
 }
 
 .hint-icon {

@@ -23,13 +23,23 @@ const leaderboard = ref<Leaderboard>(loadLeaderboard())
 const showLeaderboard = ref(false)
 const showDifficultySelector = ref(false)
 const gameCompleted = ref(false)
+const isPaused = ref(false)
 
 // Timer
 let timerInterval: number | null = null
+const nowTick = ref(0)
+const pauseStartedAt = ref<number | null>(null)
+const pausedMsAccumulated = ref(0)
 
 const currentTime = computed(() => {
+  // establish dependency so this recomputes every second
+  void nowTick.value
   if (!gameState.value) return 0
-  return getCurrentTime(gameState.value)
+  const baseSeconds = getCurrentTime(gameState.value)
+  const pausedMs = pausedMsAccumulated.value + (pauseStartedAt.value ? (Date.now() - pauseStartedAt.value) : 0)
+  const subtractSeconds = Math.floor(pausedMs / 1000)
+  const effective = baseSeconds - subtractSeconds
+  return effective > 0 ? effective : 0
 })
 
 const availableDigits = computed(() => {
@@ -76,10 +86,15 @@ const startNewGame = (rank: string) => {
   gameCompleted.value = false
   showLeaderboard.value = false
   showDifficultySelector.value = false
+  isPaused.value = false
+  pauseStartedAt.value = null
+  pausedMsAccumulated.value = 0
+  nowTick.value = 0
   startTimer()
 }
 
 const selectCell = (row: number, col: number) => {
+  if (isPaused.value) return
   selectedCell.value = { row, col }
   conflicts.value = []
   hints.value = []
@@ -91,7 +106,7 @@ const selectCell = (row: number, col: number) => {
 }
 
 const handleCellInput = (row: number, col: number, value: number | null) => {
-  if (!gameState.value) return
+  if (!gameState.value || isPaused.value) return
   
   const newState = setCellValue(gameState.value, row, col, value as MaybeDigit)
   gameState.value = newState
@@ -154,7 +169,7 @@ const checkCompletedBoxes = () => {
 }
 
 const useHint = () => {
-  if (!gameState.value || !selectedCell.value || !canUseHint.value) return
+  if (!gameState.value || !selectedCell.value || !canUseHint.value || isPaused.value) return
   
   const hintResult = getHint(gameState.value, selectedCell.value.row, selectedCell.value.col)
   if (hintResult.success && hintResult.newState) {
@@ -181,6 +196,7 @@ const useHint = () => {
 }
 
 const selectDigit = (digit: number) => {
+  if (isPaused.value) return
   selectedDigit.value = digit
 }
 
@@ -211,7 +227,8 @@ const handleGameCompletion = () => {
 const startTimer = () => {
   if (timerInterval) clearInterval(timerInterval)
   timerInterval = setInterval(() => {
-    // Timer updates are handled by the computed property
+    // advance a reactive tick to trigger time recomputation
+    nowTick.value++
   }, 1000)
 }
 
@@ -232,6 +249,25 @@ const resetGame = () => {
   gameCompleted.value = false
   showLeaderboard.value = false
   showDifficultySelector.value = true // Show difficulty selector when starting new game
+  nowTick.value = 0
+  isPaused.value = false
+  pauseStartedAt.value = null
+  pausedMsAccumulated.value = 0
+}
+
+const togglePause = () => {
+  if (!gameState.value) return
+  isPaused.value = !isPaused.value
+  if (isPaused.value) {
+    stopTimer()
+    pauseStartedAt.value = Date.now()
+  } else {
+    if (pauseStartedAt.value) {
+      pausedMsAccumulated.value += Date.now() - pauseStartedAt.value
+      pauseStartedAt.value = null
+    }
+    startTimer()
+  }
 }
 
 onMounted(() => {
@@ -278,7 +314,9 @@ onUnmounted(() => {
               :errors-count="gameState.errorsCount"
               :hint-cost="gameState.hintCost"
               :can-use-hint="canUseHint"
+              :is-paused="isPaused"
               @use-hint="useHint"
+              @toggle-pause="togglePause"
             />
           </div>
 
@@ -288,24 +326,33 @@ onUnmounted(() => {
             <div class="level-label">
               <span class="level-text">Level: {{ getDifficultyName(gameState.rank) }}</span>
             </div>
-            
-        <SudokuBoard 
-          :grid="gameState.currentGrid"
-          :original-grid="gameState.originalGrid"
-          :selected-cell="selectedCell"
-          :conflicts="conflicts"
-          :hints="hints"
-          :completed-boxes="completedBoxes"
-          @cell-click="selectCell"
-          @cell-input="handleCellInput"
-        />
-            
-            <!-- Available Digits below the board -->
-            <AvailableDigits
-              :digits="availableDigits"
-              :selected-digit="selectedDigit as Digit | null"
-              @digit-selected="selectDigit"
-            />
+            <div class="board-wrapper" :class="{ 'is-paused': isPaused }">
+              <div class="board-content" :class="{ paused: isPaused }">
+                <SudokuBoard 
+                  :grid="gameState.currentGrid"
+                  :original-grid="gameState.originalGrid"
+                  :selected-cell="selectedCell"
+                  :conflicts="conflicts"
+                  :hints="hints"
+                  :completed-boxes="completedBoxes"
+                  @cell-click="selectCell"
+                  @cell-input="handleCellInput"
+                />
+                
+                <!-- Available Digits below the board -->
+                <AvailableDigits
+                  :digits="availableDigits"
+                  :selected-digit="selectedDigit as Digit | null"
+                  @digit-selected="selectDigit"
+                />
+              </div>
+              <div v-if="isPaused" class="paused-overlay">
+                <div class="paused-content">
+                  <div class="paused-title">Paused</div>
+                  <div class="paused-sub">Press Resume to continue</div>
+                </div>
+              </div>
+            </div>
           </div>
 
           <!-- Right Panel -->
@@ -494,6 +541,47 @@ onUnmounted(() => {
   flex-direction: column;
   align-items: center;
   gap: 20px;
+}
+
+.board-wrapper {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.board-content.paused {
+  filter: grayscale(1) brightness(0.8);
+  pointer-events: none;
+}
+
+.paused-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(2px);
+  border-radius: 12px;
+}
+
+.paused-content {
+  text-align: center;
+  color: white;
+}
+
+.paused-title {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.paused-sub {
+  margin-top: 6px;
+  opacity: 0.9;
 }
 
 .level-label {
