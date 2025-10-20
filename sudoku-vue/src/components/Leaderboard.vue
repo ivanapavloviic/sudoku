@@ -1,12 +1,12 @@
 <template>
-  <div class="leaderboard">
-    <h3>🏆 Leaderboard</h3>
+  <div class="leaderboard bg-surface/90 dark:bg-slate-900/70 backdrop-blur rounded-2xl shadow ring-1 ring-black/5 p-6 w-full max-w-lg mx-auto">
+    <h3 class="text-center text-2xl font-semibold text-slate-800 dark:text-slate-100 mb-5">🏆 Leaderboard</h3>
     
-    <div class="difficulty-tabs">
+    <div class="difficulty-tabs flex gap-2 mb-5 bg-slate-100 dark:bg-slate-800 rounded-xl p-1">
       <button
         v-for="(rank, key) in Rank"
         :key="key"
-        class="tab-btn"
+        class="tab-btn flex-1 rounded-lg px-3 py-2 text-sm font-medium transition"
         :class="{ active: selectedDifficulty === rank }"
         @click="selectDifficulty(rank)"
       >
@@ -15,32 +15,32 @@
     </div>
     
     <div class="leaderboard-content">
-      <div v-if="currentEntries.length === 0" class="no-entries">
+      <div v-if="currentEntries.length === 0" class="no-entries text-center py-10 text-slate-600">
         <p>No records yet. Be the first to complete a {{ selectedDifficulty }} game!</p>
       </div>
       
-      <div v-else class="entries-list">
+      <div v-else class="entries-list flex flex-col gap-3">
         <div
           v-for="(entry, index) in currentEntries"
           :key="entry.id"
-          class="leaderboard-entry"
+          class="leaderboard-entry flex items-center gap-4 p-4 rounded-xl bg-slate-50 transition hover:-translate-y-0.5 hover:bg-slate-100"
           :class="`rank-${index + 1}`"
         >
-          <div class="rank-badge">
+          <div class="rank-badge text-xl min-w-[30px] text-center">
             <span v-if="index === 0">🥇</span>
             <span v-else-if="index === 1">🥈</span>
             <span v-else-if="index === 2">🥉</span>
             <span v-else>{{ index + 1 }}</span>
           </div>
           
-          <div class="entry-info">
-            <div class="entry-score">{{ formatScore(entry.score) }}</div>
-            <div class="entry-details">
+          <div class="entry-info flex-1">
+            <div class="entry-score text-xl font-semibold text-slate-800">{{ formatScore(entry.score) }}</div>
+            <div class="entry-details flex gap-4 text-xs text-slate-600 opacity-90 mb-1">
               <span class="entry-time">{{ formatTime(entry.timeElapsed) }}</span>
               <span class="entry-hints">{{ entry.hintsUsed }} hints</span>
               <span class="entry-errors">{{ entry.errorsCount }} errors</span>
             </div>
-            <div class="entry-date">{{ formatDate(entry.date) }}</div>
+            <div class="entry-date text-[0.7rem] text-slate-500">{{ formatDate(entry.date) }}</div>
           </div>
         </div>
       </div>
@@ -97,80 +97,25 @@ const formatDate = (dateString: string): string => {
 </script>
 
 <style scoped>
-.leaderboard {
-  background: white;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  max-width: 500px;
-  margin: 0 auto;
-}
+.leaderboard {}
 
-.leaderboard h3 {
-  text-align: center;
-  margin: 0 0 20px 0;
-  color: #333;
-  font-size: 1.5rem;
-}
+.leaderboard h3 {}
 
-.difficulty-tabs {
-  display: flex;
-  gap: 5px;
-  margin-bottom: 20px;
-  background: #f5f5f5;
-  border-radius: 8px;
-  padding: 4px;
-}
+.difficulty-tabs {}
 
-.tab-btn {
-  flex: 1;
-  background: transparent;
-  border: none;
-  padding: 8px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: #666;
-}
+.tab-btn { border: none; color: #64748b; }
 
-.tab-btn.active {
-  background: white;
-  color: #4a90e2;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
+.tab-btn.active { background: white; color: #0f172a; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
 
-.tab-btn:hover {
-  color: #4a90e2;
-}
+.tab-btn:hover { color: #0f172a; }
 
-.no-entries {
-  text-align: center;
-  padding: 40px 20px;
-  color: #666;
-}
+.no-entries {}
 
-.entries-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
+.entries-list {}
 
-.leaderboard-entry {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  padding: 15px;
-  border-radius: 8px;
-  background: #f9f9f9;
-  transition: all 0.2s ease;
-}
+.leaderboard-entry {}
 
-.leaderboard-entry:hover {
-  background: #f0f8ff;
-  transform: translateY(-1px);
-}
+.leaderboard-entry:hover {}
 
 .leaderboard-entry.rank-1 {
   background: linear-gradient(135deg, #FFD700, #FFA500);
@@ -187,38 +132,15 @@ const formatDate = (dateString: string): string => {
   color: #333;
 }
 
-.rank-badge {
-  font-size: 1.5rem;
-  min-width: 30px;
-  text-align: center;
-}
+.rank-badge {}
 
-.entry-info {
-  flex: 1;
-}
+.entry-info {}
 
-.entry-score {
-  font-size: 1.3rem;
-  font-weight: bold;
-  margin-bottom: 5px;
-  color: #333;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
-}
+.entry-score {}
 
-.entry-details {
-  display: flex;
-  gap: 15px;
-  font-size: 0.8rem;
-  opacity: 0.9;
-  margin-bottom: 3px;
-  color: #555;
-}
+.entry-details {}
 
-.entry-date {
-  font-size: 0.7rem;
-  opacity: 0.7;
-  color: #666;
-}
+.entry-date {}
 
 /* Responsive design */
 @media (max-width: 600px) {

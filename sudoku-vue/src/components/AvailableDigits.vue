@@ -1,11 +1,11 @@
 <template>
-  <div class="available-digits">
-    <h4>Available Digits</h4>
-    <div class="digits-grid">
+  <div class="available-digits bg-surface/90 dark:bg-slate-900/70 backdrop-blur rounded-2xl shadow ring-1 ring-black/5 p-5 w-full max-w-md">
+    <h4 class="text-center text-slate-700 dark:text-slate-200 font-medium mb-4">Available Digits</h4>
+    <div class="digits-grid flex flex-wrap justify-center gap-2">
       <button
         v-for="digit in digits"
         :key="digit.digit"
-        class="digit-btn"
+        class="digit-btn w-12 h-12 md:w-14 md:h-14 rounded-xl border-2 flex items-center justify-center font-semibold transition active:scale-[.98]"
         :class="{ 
           complete: digit.isComplete,
           selected: selectedDigit === digit.digit
@@ -46,64 +46,19 @@ const selectDigit = (digit: Digit) => {
 </script>
 
 <style scoped>
-.available-digits {
-  background: white;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
+.available-digits {}
 
-.available-digits h4 {
-  margin: 0 0 15px 0;
-  color: #333;
-  font-size: 1.1rem;
-  text-align: center;
-}
+.available-digits h4 {}
 
-.digits-grid {
-  display: flex;
-  gap: 8px;
-  justify-content: center;
-  flex-wrap: wrap;
-}
+.digits-grid {}
 
-.digit-btn {
-  width: 40px;
-  height: 40px;
-  border: 2px solid #e0e0e0;
-  border-radius: 8px;
-  background: white;
-  color: #333;
-  font-size: 1.1rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-}
+.digit-btn { border-color: #e5e7eb; background: white; color: #0f172a; font-size: 1.2rem; }
 
-.digit-btn:hover:not(:disabled) {
-  border-color: #4a90e2;
-  background-color: #f0f8ff;
-  transform: translateY(-1px);
-}
+.digit-btn:hover:not(:disabled) { border-color: #94a3b8; background-color: #f8fafc; }
 
-.digit-btn.selected {
-  border-color: #4a90e2;
-  background-color: #4a90e2;
-  color: white;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(74, 144, 226, 0.3);
-}
+.digit-btn.selected { border-color: #3b82f6; background-color: #3b82f6; color: white; }
 
-.digit-btn.complete {
-  background-color: #f5f5f5;
-  color: #999;
-  cursor: not-allowed;
-  border-color: #ddd;
-}
+.digit-btn.complete { background-color: #f1f5f9; color: #94a3b8; cursor: not-allowed; border-color: #e2e8f0; }
 
 .digit-btn.complete .digit-number {
   opacity: 0.5;
@@ -114,7 +69,7 @@ const selectDigit = (digit: Digit) => {
   top: 2px;
   right: 2px;
   font-size: 0.8rem;
-  color: #4CAF50;
+  color: #10b981;
   font-weight: bold;
 }
 

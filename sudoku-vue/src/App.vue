@@ -65,16 +65,7 @@ const canUseHint = computed(() => {
   return true
 })
 
-const isCellInCompletedBox = (row: number, col: number): boolean => {
-  if (!gameState.value) return false
-  
-  const boxRow = Math.floor(row / 3)
-  const boxCol = Math.floor(col / 3)
-  
-  return completedBoxes.value.some(box => 
-    box.row === boxRow && box.col === boxCol
-  )
-}
+//
 
 const startNewGame = (rank: string) => {
   gameState.value = createNewGame(rank as Rank)
@@ -281,13 +272,13 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="app">
-    <header class="app-header">
-      <h1>🧩 Sudoku Game</h1>
-      <p>Challenge your mind with the classic number puzzle</p>
+  <div class="app min-h-screen bg-background dark:bg-slate-900 text-slate-800 dark:text-slate-100 selection:bg-black selection:text-white">
+    <header class="app-header text-center max-w-5xl mx-auto py-6 md:py-10">
+      <h1 class="text-4xl md:text-5xl font-semibold tracking-tight text-slate-900 dark:text-white">🧩 Sudoku Game</h1>
+      <p class="mt-2 text-slate-600 dark:text-slate-300">Challenge your mind with the classic number puzzle</p>
     </header>
 
-    <main class="app-main">
+    <main class="app-main w-full max-w-none mx-auto px-4 md:px-6">
       <!-- Difficulty Selection -->
       <div v-if="!gameState" class="game-setup">
         <DifficultySelector 
@@ -302,7 +293,7 @@ onUnmounted(() => {
       </div>
 
       <!-- Game Interface -->
-      <div v-else-if="!showLeaderboard" class="game-interface">
+      <div v-else-if="!showLeaderboard" class="game-interface w-full bg-surface/90 dark:bg-slate-900/70 backdrop-blur rounded-3xl shadow-lg ring-1 ring-black/5 p-4 md:p-6">
         <div class="game-layout">
           <!-- Left Panel -->
           <div class="left-panel">
@@ -321,50 +312,52 @@ onUnmounted(() => {
           </div>
 
           <!-- Center Panel -->
-          <div class="center-panel">
+          <div class="center-panel w-full">
             <!-- Level Label above the board -->
-            <div class="level-label">
-              <span class="level-text">Level: {{ getDifficultyName(gameState.rank) }}</span>
+            <div class="level-label px-4 py-1.5 rounded-full bg-primary-700 text-white shadow-sm">
+              <span class="level-text text-sm font-medium">Level: {{ getDifficultyName(gameState.rank) }}</span>
             </div>
-            <div class="board-wrapper" :class="{ 'is-paused': isPaused }">
-              <div class="board-content" :class="{ paused: isPaused }">
-                <SudokuBoard 
-                  :grid="gameState.currentGrid"
-                  :original-grid="gameState.originalGrid"
-                  :selected-cell="selectedCell"
-                  :conflicts="conflicts"
-                  :hints="hints"
-                  :completed-boxes="completedBoxes"
-                  @cell-click="selectCell"
-                  @cell-input="handleCellInput"
-                />
-                
-                <!-- Available Digits below the board -->
-                <AvailableDigits
-                  :digits="availableDigits"
-                  :selected-digit="selectedDigit as Digit | null"
-                  @digit-selected="selectDigit"
-                />
-              </div>
-              <div v-if="isPaused" class="paused-overlay">
-                <div class="paused-content">
-                  <div class="paused-title">Paused</div>
-                  <div class="paused-sub">Press Resume to continue</div>
+            <div class="board-wrapper w-full flex flex-col items-center gap-6" :class="{ 'is-paused': isPaused }" style="max-width: 100%;">
+              <!-- Responsive square area driven by width (max 95vmin) -->
+              <div class="board-size relative w-full max-w-[min(92vmin,1100px)] aspect-square md:max-w-[min(95vmin,1200px)] lg:max-w-[min(98vmin,1300px)]">
+                <div class="board-content absolute inset-0" :class="{ paused: isPaused }">
+                  <SudokuBoard 
+                    :grid="gameState.currentGrid"
+                    :original-grid="gameState.originalGrid"
+                    :selected-cell="selectedCell"
+                    :conflicts="conflicts"
+                    :hints="hints"
+                    :completed-boxes="completedBoxes"
+                    @cell-click="selectCell"
+                    @cell-input="handleCellInput"
+                  />
+                </div>
+                <div v-if="isPaused" class="paused-overlay absolute inset-0 flex items-center justify-center">
+                  <div class="paused-content text-center text-white">
+                    <div class="paused-title text-3xl font-extrabold tracking-widest uppercase">Paused</div>
+                    <div class="paused-sub mt-2 opacity-90">Press Resume to continue</div>
+                  </div>
                 </div>
               </div>
+              <!-- Available Digits below the board (outside fixed-size area) -->
+              <AvailableDigits
+                :digits="availableDigits"
+                :selected-digit="selectedDigit as Digit | null"
+                @digit-selected="selectDigit"
+              />
             </div>
           </div>
 
           <!-- Right Panel -->
           <div class="right-panel">
             <div class="game-controls">
-              <button class="control-btn change-difficulty" @click="showDifficultySelector = true">
+              <button class="control-btn change-difficulty inline-flex items-center justify-center rounded-xl px-4 py-2 font-medium text-white bg-primary-700 hover:bg-primary-800 transition shadow-sm active:scale-[.98]" @click="showDifficultySelector = true">
                 🔄 Change Level
               </button>
-              <button class="control-btn new-game" @click="resetGame">
+              <button class="control-btn new-game inline-flex items-center justify-center rounded-xl px-4 py-2 font-medium text-white bg-emerald-600 hover:bg-emerald-700 transition shadow-sm active:scale-[.98]" @click="resetGame">
                 🆕 New Game
               </button>
-              <button class="control-btn leaderboard" @click="showLeaderboard = true">
+              <button class="control-btn leaderboard inline-flex items-center justify-center rounded-xl px-4 py-2 font-medium text-white bg-amber-500 hover:bg-amber-600 transition shadow-sm active:scale-[.98]" @click="showLeaderboard = true">
                 🏆 Leaderboard
               </button>
             </div>
@@ -379,13 +372,13 @@ onUnmounted(() => {
           @difficulty-changed="(rank: string) => startNewGame(rank)"
         />
         <div class="leaderboard-actions">
-          <button class="control-btn" @click="showLeaderboard = false">
+          <button class="control-btn inline-flex items-center justify-center rounded-xl px-4 py-2 font-medium text-white bg-primary-700 hover:bg-primary-800 transition shadow-sm active:scale-[.98]" @click="showLeaderboard = false">
             ← Back to Game
           </button>
-          <button class="control-btn change-difficulty" @click="showDifficultySelector = true">
+          <button class="control-btn change-difficulty inline-flex items-center justify-center rounded-xl px-4 py-2 font-medium text-white bg-primary-700 hover:bg-primary-800 transition shadow-sm active:scale-[.98]" @click="showDifficultySelector = true">
             🔄 Change Level
           </button>
-          <button class="control-btn new-game" @click="resetGame">
+          <button class="control-btn new-game inline-flex items-center justify-center rounded-xl px-4 py-2 font-medium text-white bg-emerald-600 hover:bg-emerald-700 transition shadow-sm active:scale-[.98]" @click="resetGame">
             🆕 New Game
           </button>
         </div>
@@ -499,7 +492,8 @@ onUnmounted(() => {
 }
 
 .app-main {
-  max-width: 1200px;
+  width: 100%;
+  max-width: none;
   margin: 0 auto;
 }
 
@@ -519,15 +513,16 @@ onUnmounted(() => {
 .game-interface {
   background: white;
   border-radius: 16px;
-  padding: 30px;
+  padding: 20px; /* tighter to give more space to board */
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
 
 .game-layout {
   display: grid;
-  grid-template-columns: 250px 1fr 200px;
+  grid-template-columns: 1fr;
   gap: 30px;
   align-items: start;
+  width: 100%;
 }
 
 .left-panel, .right-panel {
@@ -541,6 +536,7 @@ onUnmounted(() => {
   flex-direction: column;
   align-items: center;
   gap: 20px;
+  width: 100%;
 }
 
 .board-wrapper {
@@ -550,6 +546,9 @@ onUnmounted(() => {
   flex-direction: column;
   align-items: center;
 }
+
+/* Make board container a responsive square that fills available width up to viewport vmin */
+.board-size { width: min(100%, 96vmin); aspect-ratio: 1 / 1; }
 
 .board-content.paused {
   filter: grayscale(1) brightness(0.8);

@@ -1,43 +1,45 @@
 <template>
-  <div class="game-info">
-    <div class="info-section">
+  <div class="game-info bg-surface/90 dark:bg-slate-900/70 backdrop-blur rounded-2xl shadow-md ring-1 ring-black/5 p-5">
+    <div class="info-section grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
       <div class="info-item">
-        <div class="info-label">Score</div>
-        <div class="info-value score">{{ score }}</div>
+        <div class="info-label text-xs text-slate-500">Score</div>
+        <div class="info-value score text-xl font-semibold">{{ score }}</div>
       </div>
       
       <div class="info-item">
-        <div class="info-label">Time</div>
-        <div class="time-row">
-          <div class="info-value time">{{ formatTime(timeElapsed) }}</div>
-          <button class="pause-btn" :class="{ resume: isPaused }" @click="togglePause">
+        <div class="info-label text-xs text-slate-500">Time</div>
+        <div class="time-row flex items-center justify-center gap-2">
+          <div class="info-value time text-xl font-semibold">{{ formatTime(timeElapsed) }}</div>
+          <button class="pause-btn inline-flex items-center justify-center rounded-lg px-3 py-1 text-sm font-medium text-white transition shadow-sm active:scale-[.98]"
+            :class="isPaused ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-primary-700 hover:bg-primary-800'"
+            @click="togglePause">
             {{ isPaused ? 'Resume' : 'Pause' }}
           </button>
         </div>
       </div>
       
       <div class="info-item">
-        <div class="info-label">Hints Used</div>
-        <div class="info-value hints">{{ hintsUsed }}/{{ maxHints }}</div>
+        <div class="info-label text-xs text-slate-500">Hints Used</div>
+        <div class="info-value hints text-xl font-semibold">{{ hintsUsed }}/{{ maxHints }}</div>
       </div>
       
       <div class="info-item">
-        <div class="info-label">Errors</div>
-        <div class="info-value errors">{{ errorsCount }}</div>
+        <div class="info-label text-xs text-slate-500">Errors</div>
+        <div class="info-value errors text-xl font-semibold">{{ errorsCount }}</div>
       </div>
     </div>
     
-    <div class="hint-section">
-      <button 
-        class="hint-btn"
-        :class="{ 'disabled': !canUseHint }"
+    <div class="hint-section flex justify-center">
+      <button
+        class="hint-btn inline-flex items-center gap-2 rounded-xl px-4 py-2 font-medium text-white transition shadow-sm active:scale-[.98]"
+        :class="canUseHint ? 'bg-primary-700 hover:bg-primary-800' : 'bg-slate-300 cursor-not-allowed'"
         :disabled="!canUseHint"
         @click="useHint"
         :title="hintTooltip"
       >
-        <span class="hint-icon">💡</span>
+        <span class="hint-icon text-lg">💡</span>
         <span class="hint-text">Hint</span>
-        <span class="hint-cost">-{{ hintCost }}</span>
+        <span class="hint-cost bg-white/20 rounded px-2 py-0.5 text-sm">-{{ hintCost }}</span>
       </button>
     </div>
   </div>
@@ -157,60 +159,13 @@ const hintTooltip = computed(() => {
   justify-content: center;
 }
 
-.hint-btn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: linear-gradient(135deg, #FFD700, #FFA500);
-  border: none;
-  border-radius: 25px;
-  padding: 12px 20px;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.hint-btn:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-}
-
-.hint-btn:disabled,
-.hint-btn.disabled {
-  background: #ccc;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-}
+.hint-btn { border: none; }
 
 .hint-btn.disabled .hint-cost {
   color: #ff4444;
 }
 
-.pause-btn {
-  background: #607d8b;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 6px 12px;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.pause-btn:hover {
-  background: #546e7a;
-}
-
-.pause-btn.resume {
-  background: #4CAF50;
-}
-
-.pause-btn.resume:hover {
-  background: #43a047;
-}
+.pause-btn { border: none; }
 
 .hint-icon {
   font-size: 1.2rem;

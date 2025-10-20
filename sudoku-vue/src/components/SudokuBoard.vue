@@ -1,16 +1,16 @@
 <template>
-  <div class="sudoku-board">
-    <div class="grid-container">
+  <div class="sudoku-board w-full h-full flex items-center justify-center p-2 md:p-4">
+    <div class="grid-container grid grid-cols-9 gap-px bg-slate-300 rounded-2xl overflow-hidden shadow-lg ring-1 ring-black/10 w-full h-full">
       <div 
         v-for="(row, rowIndex) in grid" 
         :key="`row-${rowIndex}`"
-        class="grid-row"
+        class="grid-row contents"
         :class="{ 'completed-row': isRowCompleted(rowIndex) }"
       >
         <div
           v-for="(cell, colIndex) in row"
           :key="`cell-${rowIndex}-${colIndex}`"
-          class="grid-cell"
+          class="grid-cell w-full aspect-square bg-white flex items-center justify-center text-[clamp(28px,7.2vmin,88px)] md:text-[clamp(28px,6.5vmin,80px)] font-semibold text-slate-800 cursor-pointer transition-colors duration-150 select-none"
           :class="getCellClasses(rowIndex, colIndex)"
           @click="selectCell(rowIndex, colIndex)"
           @keydown="handleKeydown($event, rowIndex, colIndex)"
@@ -138,13 +138,8 @@ const handleKeydown = (event: KeyboardEvent, row: number, col: number) => {
 
 .grid-container {
   display: grid;
-  grid-template-columns: repeat(9, 1fr);
-  gap: 1px;
-  background-color: #2c3e50;
-  border: 4px solid #2c3e50;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  grid-template-columns: repeat(9, minmax(0, 1fr));
+  gap: 1px; /* fallback separators between cells */
 }
 
 .grid-row {
@@ -156,21 +151,7 @@ const handleKeydown = (event: KeyboardEvent, row: number, col: number) => {
   animation: rowComplete 0.6s ease-in-out;
 }
 
-.grid-cell {
-  width: 50px;
-  height: 50px;
-  background-color: white;
-  border: 1px solid #ddd;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-size: 1.5rem;
-  font-weight: bold;
-  user-select: none;
-  color: #333;
-}
+.grid-cell { border: 1px solid #e5e7eb; }
 
 .grid-cell:hover {
   background-color: #f0f8ff;
@@ -183,7 +164,7 @@ const handleKeydown = (event: KeyboardEvent, row: number, col: number) => {
 }
 
 .grid-cell.original {
-  background-color: #f5f5f5;
+  background-color: #f8fafc;
   color: #333;
   font-weight: 900;
 }
@@ -202,21 +183,10 @@ const handleKeydown = (event: KeyboardEvent, row: number, col: number) => {
   border: 2px solid #357abd;
 }
 
-.grid-cell.box-top {
-  border-top: 3px solid #333;
-}
-
-.grid-cell.box-bottom {
-  border-bottom: 3px solid #333;
-}
-
-.grid-cell.box-left {
-  border-left: 3px solid #333;
-}
-
-.grid-cell.box-right {
-  border-right: 3px solid #333;
-}
+.grid-cell.box-top { border-top: 3px solid #0f172a; }
+.grid-cell.box-bottom { border-bottom: 3px solid #0f172a; }
+.grid-cell.box-left { border-left: 3px solid #0f172a; }
+.grid-cell.box-right { border-right: 3px solid #0f172a; }
 
 .grid-cell.completed-box {
   background: linear-gradient(135deg, #e8f5e8, #d4edda);
@@ -233,8 +203,8 @@ const handleKeydown = (event: KeyboardEvent, row: number, col: number) => {
 
 .cell-value {
   font-size: 1.5rem;
-  font-weight: bold;
-  color: #333;
+  font-weight: 700;
+  color: #0f172a;
 }
 
 .cell-placeholder {
