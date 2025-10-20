@@ -354,9 +354,6 @@ onUnmounted(() => {
               <button class="control-btn change-difficulty inline-flex items-center justify-center rounded-xl px-4 py-2 font-medium text-white bg-primary-700 hover:bg-primary-800 transition shadow-sm active:scale-[.98]" @click="showDifficultySelector = true">
                 🔄 Change Level
               </button>
-              <button class="control-btn new-game inline-flex items-center justify-center rounded-xl px-4 py-2 font-medium text-white bg-emerald-600 hover:bg-emerald-700 transition shadow-sm active:scale-[.98]" @click="resetGame">
-                🆕 New Game
-              </button>
               <button class="control-btn leaderboard inline-flex items-center justify-center rounded-xl px-4 py-2 font-medium text-white bg-amber-500 hover:bg-amber-600 transition shadow-sm active:scale-[.98]" @click="showLeaderboard = true">
                 🏆 Leaderboard
               </button>
@@ -387,45 +384,42 @@ onUnmounted(() => {
 
     <!-- Difficulty Selector Modal -->
     <div v-if="showDifficultySelector" class="difficulty-modal">
-      <div class="modal-content">
-        <h2>🎯 Change Difficulty Level</h2>
-        <p>Select a new difficulty level for your Sudoku game:</p>
+      <div class="modal-content text-slate-900">
+        <h2 class="text-primary-700">🎯 Change Difficulty Level</h2>
+        <p class="text-slate-700">Select a new difficulty level for your Sudoku game:</p>
         <div class="difficulty-options">
           <button 
             class="difficulty-btn beginner" 
             @click="startNewGame(Rank.Beginner)"
           >
-            <span class="difficulty-name">Easy</span>
-            <span class="difficulty-desc">36-40 cells visible</span>
+            <span class="difficulty-name text-slate-900">Easy</span>
+            <span class="difficulty-desc text-slate-600">36-40 cells visible</span>
           </button>
           <button 
             class="difficulty-btn intermediate" 
             @click="startNewGame(Rank.Intermediate)"
           >
-            <span class="difficulty-name">Medium</span>
-            <span class="difficulty-desc">32-36 cells visible</span>
+            <span class="difficulty-name text-slate-900">Medium</span>
+            <span class="difficulty-desc text-slate-600">32-36 cells visible</span>
           </button>
           <button 
             class="difficulty-btn hard" 
             @click="startNewGame(Rank.Hard)"
           >
-            <span class="difficulty-name">Hard</span>
-            <span class="difficulty-desc">28-32 cells visible</span>
+            <span class="difficulty-name text-slate-900">Hard</span>
+            <span class="difficulty-desc text-slate-600">28-32 cells visible</span>
           </button>
           <button 
             class="difficulty-btn expert" 
             @click="startNewGame(Rank.Expert)"
           >
-            <span class="difficulty-name">Expert</span>
-            <span class="difficulty-desc">24-28 cells visible</span>
+            <span class="difficulty-name text-slate-900">Expert</span>
+            <span class="difficulty-desc text-slate-600">24-28 cells visible</span>
           </button>
         </div>
         <div class="modal-actions">
           <button class="control-btn" @click="showDifficultySelector = false">
             Cancel
-          </button>
-          <button class="control-btn new-game" @click="resetGame">
-            🆕 New Game
           </button>
         </div>
       </div>

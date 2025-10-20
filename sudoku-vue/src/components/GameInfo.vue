@@ -10,10 +10,12 @@
         <div class="info-label text-xs text-slate-500">Time</div>
         <div class="time-row flex items-center justify-center gap-2">
           <div class="info-value time text-xl font-semibold">{{ formatTime(timeElapsed) }}</div>
-          <button class="pause-btn inline-flex items-center justify-center rounded-lg px-3 py-1 text-sm font-medium text-white transition shadow-sm active:scale-[.98]"
-            :class="isPaused ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-primary-700 hover:bg-primary-800'"
-            @click="togglePause">
-            {{ isPaused ? 'Resume' : 'Pause' }}
+          <button class="pause-btn inline-flex items-center justify-center px-1 py-0 text-base transition active:scale-[.98]"
+            :class="isPaused ? 'text-emerald-600 hover:text-emerald-700' : 'text-primary-700 hover:text-primary-800'"
+            @click="togglePause"
+            :aria-label="isPaused ? 'Resume' : 'Pause'">
+            <span v-if="isPaused" class="leading-none">▶</span>
+            <span v-else class="leading-none">⏸</span>
           </button>
         </div>
       </div>
