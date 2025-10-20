@@ -1,16 +1,11 @@
 <template>
-  <div class="sudoku-board w-full h-full flex items-center justify-center p-2 md:p-4">
+  <div class="sudoku-board w-full h-full flex items-center justify-center p-1">
     <div class="grid-container grid grid-cols-9 gap-px bg-slate-300 rounded-2xl overflow-hidden shadow-lg ring-1 ring-black/10 w-full h-full">
-      <div 
-        v-for="(row, rowIndex) in grid" 
-        :key="`row-${rowIndex}`"
-        class="grid-row contents"
-        :class="{ 'completed-row': isRowCompleted(rowIndex) }"
-      >
+      <template v-for="(row, rowIndex) in grid" :key="`row-${rowIndex}`">
         <div
           v-for="(cell, colIndex) in row"
           :key="`cell-${rowIndex}-${colIndex}`"
-          class="grid-cell w-full aspect-square bg-white flex items-center justify-center text-[clamp(28px,7.2vmin,88px)] md:text-[clamp(28px,6.5vmin,80px)] font-semibold text-slate-800 cursor-pointer transition-colors duration-150 select-none"
+          class="grid-cell aspect-square bg-white flex items-center justify-center text-[clamp(16px,3vmin,36px)] font-semibold text-slate-800 cursor-pointer transition-colors duration-150 select-none"
           :class="getCellClasses(rowIndex, colIndex)"
           @click="selectCell(rowIndex, colIndex)"
           @keydown="handleKeydown($event, rowIndex, colIndex)"
@@ -19,7 +14,7 @@
           <span v-if="cell !== null" class="cell-value">{{ cell }}</span>
           <span v-else class="cell-placeholder">&nbsp;</span>
         </div>
-      </div>
+      </template>
     </div>
   </div>
 </template>
@@ -44,11 +39,6 @@ interface Emits {
 const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
-const isRowCompleted = (rowIndex: number): boolean => {
-  const row = props.grid[rowIndex]
-  if (!row) return false
-  return row.every(cell => cell !== null)
-}
 
 const isCellInCompletedBox = (row: number, col: number): boolean => {
   const boxRow = Math.floor(row / 3)

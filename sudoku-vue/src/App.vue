@@ -66,6 +66,15 @@ const canUseHint = computed(() => {
   return true
 })
 
+const hintTooltip = computed(() => {
+  if (!gameState.value || !selectedCell.value) return 'Select a cell to use hint'
+  if (gameState.value.hintsUsed >= gameState.value.maxHints) return 'No hints remaining'
+  if (isOriginalCell(gameState.value, selectedCell.value.row, selectedCell.value.col)) return 'Cannot hint original cells'
+  if (gameState.value.currentGrid[selectedCell.value.row]?.[selectedCell.value.col] !== null) return 'Cell is already filled'
+  if (gameState.value.score < gameState.value.hintCost) return `Need ${gameState.value.hintCost} points for hint`
+  return `Use hint (costs ${gameState.value.hintCost} points)`
+})
+
 //
 
 const startNewGame = (rank: string) => {
@@ -324,68 +333,73 @@ onUnmounted(() => {
 
       <!-- Game Interface -->
       <div v-else class="game-interface w-full bg-surface/90 dark:bg-slate-900/70 backdrop-blur rounded-3xl shadow-lg ring-1 ring-black/5 p-2 md:p-4">
-        <div class="game-layout gap-4">
-          <!-- Left Panel -->
-          <div class="left-panel">
-            <GameInfo
-              :score="gameState.score"
-              :time-elapsed="currentTime"
-              :hints-used="gameState.hintsUsed"
-              :max-hints="gameState.maxHints"
-              :errors-count="gameState.errorsCount"
-              :hint-cost="gameState.hintCost"
-              :can-use-hint="canUseHint"
-              :is-paused="isPaused"
-              @use-hint="useHint"
-              @toggle-pause="togglePause"
-            />
-          </div>
+        <!-- Score/Time Box - Full width at top -->
+        <div class="w-full mb-4">
+          <GameInfo
+            :score="gameState.score"
+            :time-elapsed="currentTime"
+            :hints-used="gameState.hintsUsed"
+            :max-hints="gameState.maxHints"
+            :errors-count="gameState.errorsCount"
+            :hint-cost="gameState.hintCost"
+            :can-use-hint="canUseHint"
+            :is-paused="isPaused"
+            @use-hint="useHint"
+            @toggle-pause="togglePause"
+          />
+        </div>
 
-          <!-- Center Panel -->
-          <div class="center-panel w-full">
-            <!-- Level + Undo/Redo row -->
-            <div class="w-full grid grid-cols-3 items-center">
-              <div class="flex justify-start">
-                <div class="level-label px-4 py-1.5 rounded-full bg-primary-700 text-white shadow-sm">
-                  <span class="level-text text-sm font-medium">Level: {{ getDifficultyName(gameState.rank) }}</span>
+        <!-- Main Game Layout - 2/3 Sudoku, 1/3 Controls -->
+        <div class="game-layout flex flex-row gap-4 min-h-[calc(100vh-16rem)]">
+          <!-- Left Panel - Sudoku (2/3) -->
+          <div class="flex flex-col items-center justify-center w-2/3">
+            <!-- Level + Controls row -->
+            <div class="w-full grid grid-cols-1 sm:grid-cols-3 items-center gap-2 mb-4">
+              <div class="flex justify-center sm:justify-start">
+                <div class="level-label px-3 py-1 rounded-full bg-primary-700 text-white shadow-sm text-xs sm:text-sm">
+                  <span class="level-text font-medium">Level: {{ getDifficultyName(gameState.rank) }}</span>
                 </div>
               </div>
               <div class="flex justify-center">
                 <button
-                  class="hint-btn inline-flex items-center gap-2 rounded-xl px-4 py-2 font-medium text-white transition shadow-sm active:scale-[.98]"
+                  class="hint-btn inline-flex items-center gap-1 sm:gap-2 rounded-lg sm:rounded-xl px-2 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-white transition shadow-sm active:scale-[.98]"
                   :class="canUseHint ? 'bg-primary-700 hover:bg-primary-800' : 'bg-slate-300 cursor-not-allowed'"
                   :disabled="!canUseHint"
                   @click="useHint"
                   :title="hintTooltip"
                 >
-                  <span class="hint-icon text-lg">💡</span>
-                  <span class="hint-text">Hint</span>
-                  <span class="hint-cost bg-white/20 rounded px-2 py-0.5 text-sm">-{{ gameState.hintCost }}</span>
+                  <span class="hint-icon text-sm sm:text-lg">💡</span>
+                  <span class="hint-text hidden sm:inline">Hint</span>
+                  <span class="hint-cost bg-white/20 rounded px-1 sm:px-2 py-0.5 text-xs">-{{ gameState.hintCost }}</span>
                 </button>
               </div>
-              <div class="flex items-center justify-end gap-2">
+              <div class="flex items-center justify-center sm:justify-end gap-1 sm:gap-2">
                 <button
-                  class="inline-flex items-center justify-center rounded-lg px-3 py-1.5 text-sm font-medium text-white bg-slate-700 hover:bg-slate-800 transition shadow-sm active:scale-[.98] disabled:opacity-50 disabled:cursor-not-allowed"
+                  class="inline-flex items-center justify-center rounded-lg px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm font-medium text-white bg-slate-700 hover:bg-slate-800 transition shadow-sm active:scale-[.98] disabled:opacity-50 disabled:cursor-not-allowed"
                   @click="undo"
                   :disabled="!gameState || gameState.undoStack.length === 0"
                   title="Undo"
                 >
-                  ⎌ Undo
+                  <span class="hidden sm:inline">⎌ Undo</span>
+                  <span class="sm:hidden">⎌</span>
                 </button>
                 <button
-                  class="inline-flex items-center justify-center rounded-lg px-3 py-1.5 text-sm font-medium text-white bg-slate-700 hover:bg-slate-800 transition shadow-sm active:scale-[.98] disabled:opacity-50 disabled:cursor-not-allowed"
+                  class="inline-flex items-center justify-center rounded-lg px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm font-medium text-white bg-slate-700 hover:bg-slate-800 transition shadow-sm active:scale-[.98] disabled:opacity-50 disabled:cursor-not-allowed"
                   @click="redo"
                   :disabled="!gameState || gameState.redoStack.length === 0"
                   title="Redo"
                 >
-                  ↻ Redo
+                  <span class="hidden sm:inline">↻ Redo</span>
+                  <span class="sm:hidden">↻</span>
                 </button>
               </div>
             </div>
-             <div class="board-wrapper w-full flex flex-col items-center gap-3" :class="{ 'is-paused': isPaused }" style="max-width: 100%;">
-              <!-- Responsive square area driven by width (max 95vmin) -->
-              <div class="board-size relative w-full max-w-[min(92vmin,1100px)] aspect-square md:max-w-[min(95vmin,1200px)] lg:max-w-[min(98vmin,1300px)]">
-                <div class="board-content absolute inset-0" :class="{ paused: isPaused }">
+            
+            <!-- Board Area -->
+            <div class="board-wrapper w-full flex flex-col items-center gap-2" :class="{ 'is-paused': isPaused }">
+              <!-- Responsive square area -->
+              <div class="board-size relative w-full max-w-[min(90vw,90vh)] sm:max-w-[min(80vw,80vh)] md:max-w-[min(70vw,70vh)] lg:max-w-[min(60vw,60vh)] aspect-square">
+                <div class="board-content w-full h-full" :class="{ paused: isPaused }">
                   <SudokuBoard 
                     :grid="gameState.currentGrid"
                     :original-grid="gameState.originalGrid"
@@ -399,12 +413,13 @@ onUnmounted(() => {
                 </div>
                 <div v-if="isPaused" class="paused-overlay absolute inset-0 flex items-center justify-center">
                   <div class="paused-content text-center text-white">
-                    <div class="paused-title text-3xl font-extrabold tracking-widest uppercase">Paused</div>
-                    <div class="paused-sub mt-2 opacity-90">Press Resume to continue</div>
+                    <div class="paused-title text-xl sm:text-2xl md:text-3xl font-extrabold tracking-widest uppercase">Paused</div>
+                    <div class="paused-sub mt-1 sm:mt-2 opacity-90 text-xs sm:text-sm">Press Resume to continue</div>
                   </div>
                 </div>
               </div>
-              <!-- Available Digits below the board (outside fixed-size area) -->
+              
+              <!-- Available Digits -->
               <AvailableDigits
                 :digits="availableDigits"
                 :selected-digit="selectedDigit as Digit | null"
@@ -413,13 +428,13 @@ onUnmounted(() => {
             </div>
           </div>
 
-          <!-- Right Panel -->
-          <div class="right-panel">
-            <div class="game-controls">
-              <button class="control-btn change-difficulty inline-flex items-center justify-center rounded-xl px-4 py-2 font-medium text-white bg-primary-700 hover:bg-primary-800 transition shadow-sm active:scale-[.98]" @click="showDifficultySelector = true">
+          <!-- Right Panel - Game Controls (1/3) -->
+          <div class="w-1/3 flex-shrink-0">
+            <div class="space-y-4 h-full flex flex-col justify-start">
+              <button class="control-btn change-difficulty w-full inline-flex items-center justify-center rounded-lg px-4 py-4 text-base font-medium text-white bg-primary-700 hover:bg-primary-800 transition shadow-sm active:scale-[.98]" @click="showDifficultySelector = true">
                 🔄 Change Level
               </button>
-              <button class="control-btn leaderboard inline-flex items-center justify-center rounded-xl px-4 py-2 font-medium text-white bg-amber-500 hover:bg-amber-600 transition shadow-sm active:scale-[.98]" @click="showLeaderboard = true">
+              <button class="control-btn leaderboard w-full inline-flex items-center justify-center rounded-lg px-4 py-4 text-base font-medium text-white bg-amber-500 hover:bg-amber-600 transition shadow-sm active:scale-[.98]" @click="showLeaderboard = true">
                 🏆 Leaderboard
               </button>
             </div>
@@ -573,13 +588,6 @@ onUnmounted(() => {
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
 
-.game-layout {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 30px;
-  align-items: start;
-  width: 100%;
-}
 
 .left-panel, .right-panel {
   display: flex;
@@ -603,8 +611,6 @@ onUnmounted(() => {
   align-items: center;
 }
 
-/* Make board container a responsive square that fills available width up to viewport vmin */
-.board-size { width: min(100%, 96vmin); aspect-ratio: 1 / 1; }
 
 .board-content.paused {
   filter: grayscale(1) brightness(0.8);
@@ -862,11 +868,6 @@ onUnmounted(() => {
 
 /* Responsive design */
 @media (max-width: 1024px) {
-  .game-layout {
-    grid-template-columns: 1fr;
-    gap: 20px;
-  }
-  
   .left-panel, .right-panel {
     flex-direction: row;
     flex-wrap: wrap;
