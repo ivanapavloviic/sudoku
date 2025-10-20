@@ -7,7 +7,7 @@
     "dev": "vite",
     "preview": "vite preview",
     "build": "vite build",
-    "deploy:gh": "npm run build && cp -f dist/index.html dist/404.html && npx gh-pages -d dist -b gh-pages"
+    "deploy:gh": "npm run build && cp -f dist/index.html dist/404.html && touch dist/.nojekyll && npx gh-pages -d dist -b gh-pages"
   },
   "dependencies": {
     "vue": "^3.5.22"
