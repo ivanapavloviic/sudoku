@@ -46,7 +46,7 @@ export function createNewGame(rank: Rank): GameState {
   // Solve puzzle to get solution
   solve(solution)
   
-  return {
+  const gameState = {
     currentGrid: cloneGrid(puzzle),
     originalGrid: cloneGrid(puzzle),
     solutionGrid: solution,
@@ -59,6 +59,8 @@ export function createNewGame(rank: Rank): GameState {
     maxHints: 10,
     hintCost: 3, // First hint costs 3 points
   }
+  
+  return gameState
 }
 
 /**
@@ -77,11 +79,11 @@ export function setCellValue(
   
   const newState = { ...state }
   newState.currentGrid = cloneGrid(state.currentGrid)
-  newState.currentGrid[row]![col] = value
   
-  // Check if valid
+  // Check if valid BEFORE setting the value
   if (value !== null) {
-    const isValid = isValidPlacement(newState.currentGrid, row, col, value as Digit)
+    // Check validity without setting the value first
+    const isValid = isValidPlacement(state.currentGrid, row, col, value as Digit)
     if (!isValid) {
       newState.errorsCount++
       newState.score = Math.max(0, newState.score - 1) // -1 point for error
@@ -90,12 +92,15 @@ export function setCellValue(
     }
   }
   
+  // Set the value
+  newState.currentGrid[row]![col] = value
+  
   // Check if game is completed
   if (value !== null && isSolved(newState.currentGrid)) {
     newState.isCompleted = true
     newState.endTime = Date.now()
     
-    // Add time bonus
+    // Add time bonus only when game is completed
     const timeElapsed = Math.floor((newState.endTime - newState.startTime) / 1000)
     const timeBonus = Math.max(0, 500 - timeElapsed)
     newState.score += timeBonus
@@ -117,6 +122,11 @@ export function getHint(
     return { success: false }
   }
   
+  // Check if has enough score for hint cost
+  if (state.score < state.hintCost) {
+    return { success: false }
+  }
+  
   // Don't allow hint for original cells
   if (state.originalGrid[row]?.[col] !== null) {
     return { success: false }
@@ -133,21 +143,23 @@ export function getHint(
   }
   
   const newState = { ...state }
-  newState.hintsUsed++
-  newState.score = Math.max(0, newState.score - newState.hintCost)
-  newState.hintCost++ // Next hint costs more
   
-  // Set hint value
+  // Subtract hint cost BEFORE incrementing hintsUsed
+  // First hint: -3, second: -4, third: -5, etc.
+  newState.score = Math.max(0, newState.score - newState.hintCost)
+  newState.hintsUsed++
+  newState.hintCost = 3 + newState.hintsUsed // Next hint costs 4, 5, 6...
+  
+  // Set hint value (no points added for hint - only cost subtracted)
   newState.currentGrid = cloneGrid(state.currentGrid)
   newState.currentGrid[row]![col] = hintValue
-  newState.score += 5 // +5 points for correct cell
   
   // Check if game is completed
   if (isSolved(newState.currentGrid)) {
     newState.isCompleted = true
     newState.endTime = Date.now()
     
-    // Add time bonus
+    // Add time bonus only when game is completed
     const timeElapsed = Math.floor((newState.endTime - newState.startTime) / 1000)
     const timeBonus = Math.max(0, 500 - timeElapsed)
     newState.score += timeBonus
