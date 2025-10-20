@@ -36,7 +36,6 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
 
 interface Props {
   score: number
@@ -54,7 +53,7 @@ interface Emits {
   (e: 'toggle-pause'): void
 }
 
-const props = defineProps<Props>()
+defineProps<Props>()
 const emit = defineEmits<Emits>()
 
 const formatTime = (seconds: number): string => {
@@ -63,28 +62,11 @@ const formatTime = (seconds: number): string => {
   return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`
 }
 
-const useHint = () => {
-  if (props.canUseHint) {
-    emit('use-hint')
-  }
-}
 
 const togglePause = () => {
   emit('toggle-pause')
 }
 
-const hintTooltip = computed(() => {
-  if (!props.canUseHint) {
-    if (props.hintsUsed >= props.maxHints) {
-      return 'No hints remaining (10/10 used)'
-    }
-    if (props.score < props.hintCost) {
-      return `Not enough score (need ${props.hintCost}, have ${props.score})`
-    }
-    return 'No hints available'
-  }
-  return `Use hint (costs ${props.hintCost} points)`
-})
 </script>
 
 <style scoped>

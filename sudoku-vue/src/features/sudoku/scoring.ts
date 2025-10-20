@@ -10,6 +10,7 @@ export interface LeaderboardEntry {
   hintsUsed: number
   errorsCount: number
   date: string
+  playerName?: string
 }
 
 export interface Leaderboard {
@@ -73,6 +74,7 @@ export function addToLeaderboard(
     hintsUsed: result.hintsUsed,
     errorsCount: result.errorsCount,
     date: new Date().toISOString(),
+    playerName: result.playerName || 'Anonymous',
   }
   
   const rankKey = result.rank as keyof Leaderboard

@@ -38,6 +38,7 @@ export interface GameResult {
   errorsCount: number
   rank: Rank
   completed: boolean
+  playerName?: string
 }
 
 interface GameSnapshot {
@@ -247,7 +248,7 @@ export function getCurrentTime(state: GameState): number {
 /**
  * Returns game result
  */
-export function getGameResult(state: GameState): GameResult {
+export function getGameResult(state: GameState, playerName?: string): GameResult {
   return {
     score: state.score,
     timeElapsed: getCurrentTime(state),
@@ -255,6 +256,7 @@ export function getGameResult(state: GameState): GameResult {
     errorsCount: state.errorsCount,
     rank: state.rank,
     completed: state.isCompleted,
+    playerName: playerName,
   }
 }
 

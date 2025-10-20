@@ -25,6 +25,8 @@ const showLeaderboard = ref(false)
 const showDifficultySelector = ref(false)
 const gameCompleted = ref(false)
 const isPaused = ref(false)
+const showNameModal = ref(false)
+const playerName = ref('')
 
 // Timer
 let timerInterval: number | null = null
@@ -239,11 +241,10 @@ const handleGameCompletion = () => {
   
   // Check if result is worthy of leaderboard
   if (isLeaderboardWorthy(leaderboard.value, result)) {
-    leaderboard.value = addToLeaderboard(leaderboard.value, result)
-    saveLeaderboard(leaderboard.value)
+    showNameModal.value = true
+  } else {
+    showLeaderboard.value = true
   }
-  
-  showLeaderboard.value = true
 }
 
 const startTimer = () => {
@@ -309,6 +310,20 @@ const redo = () => {
   if (!gameState.value || isPaused.value) return
   gameState.value = redoAction(gameState.value)
 }
+
+const savePlayerName = () => {
+  if (!gameState.value || !playerName.value.trim()) return
+  
+  const result = getGameResult(gameState.value, playerName.value.trim())
+  
+  leaderboard.value = addToLeaderboard(leaderboard.value, result)
+  saveLeaderboard(leaderboard.value)
+  
+  showNameModal.value = false
+  showLeaderboard.value = true
+  playerName.value = ''
+}
+
 
 onMounted(() => {
   // Initialize with beginner difficulty
@@ -527,8 +542,41 @@ onUnmounted(() => {
       </div>
     </div>
 
+    <!-- Name Input Modal -->
+    <div v-if="showNameModal" class="difficulty-modal">
+      <div class="modal-content text-rose-taupe-800">
+        <h2 class="text-rose-taupe-700">🏆 Congratulations!</h2>
+        <p class="text-rose-taupe-600 mb-4">You made it to the leaderboard! Enter your name:</p>
+        <div class="final-stats mb-4">
+          <div class="stat">
+            <span class="stat-label">Final Score:</span>
+            <span class="stat-value">{{ gameState?.score.toLocaleString() }}</span>
+          </div>
+        </div>
+        <div class="name-input mb-4">
+          <input 
+            v-model="playerName"
+            type="text" 
+            placeholder="Enter your name"
+            class="w-full px-4 py-2 border border-rose-taupe-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-taupe-500 focus:border-rose-taupe-500"
+            @keyup.enter="savePlayerName"
+            autofocus
+          />
+        </div>
+        <div class="modal-actions">
+          <button 
+            class="control-btn inline-flex items-center justify-center rounded-lg px-4 py-2 text-base font-medium text-linen-100 bg-rose-taupe-600 hover:bg-rose-taupe-700 transition shadow-elevation-1 active:scale-[.98]" 
+            @click="savePlayerName"
+            :disabled="!playerName.trim()"
+          >
+            Save & View Leaderboard
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- Game Completion Modal -->
-    <div v-if="gameCompleted && gameState" class="completion-modal">
+    <div v-if="gameCompleted && gameState && !showNameModal" class="completion-modal">
       <div class="modal-content">
         <h2>🎉 Congratulations!</h2>
         <p>You completed the {{ gameState.rank }} Sudoku puzzle!</p>

@@ -34,13 +34,8 @@
           </div>
           
           <div class="entry-info flex-1">
+            <div class="entry-name text-lg font-medium text-rose-taupe-700">{{ entry.playerName || 'Anonymous' }}</div>
             <div class="entry-score text-xl font-semibold text-rose-taupe-800">{{ formatScore(entry.score) }}</div>
-            <div class="entry-details flex gap-4 text-xs text-rose-taupe-600 mb-1">
-              <span class="entry-time">{{ formatTime(entry.timeElapsed) }}</span>
-              <span class="entry-hints">{{ entry.hintsUsed }} hints</span>
-              <span class="entry-errors">{{ entry.errorsCount }} errors</span>
-            </div>
-            <div class="entry-date text-[0.7rem] text-rose-taupe-500">{{ formatDate(entry.date) }}</div>
           </div>
         </div>
       </div>
@@ -52,7 +47,7 @@
 import { computed, ref } from 'vue'
 import { Rank } from '../features/sudoku/types'
 import type { Leaderboard } from '../features/sudoku/scoring'
-import { formatTime, formatScore } from '../features/sudoku/scoring'
+import { formatScore } from '../features/sudoku/scoring'
 
 interface Props {
   leaderboard: Leaderboard
@@ -86,14 +81,6 @@ const getDifficultyName = (rank: string): string => {
   return names[rank] || rank
 }
 
-const formatDate = (dateString: string): string => {
-  const date = new Date(dateString)
-  return date.toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric'
-  })
-}
 
 const getTabButtonClasses = (_rank: string, isActive: boolean): string => {
   if (isActive) {
