@@ -104,32 +104,6 @@ const getRankClasses = (rank: number): string => {
 </script>
 
 <style scoped>
-.leaderboard {}
-
-.leaderboard h3 {}
-
-.difficulty-tabs {}
-
-
-.no-entries {}
-
-.entries-list {}
-
-.leaderboard-entry {}
-
-.leaderboard-entry:hover {}
-
-
-.rank-badge {}
-
-.entry-info {}
-
-.entry-score {}
-
-.entry-details {}
-
-.entry-date {}
-
 /* Responsive design */
 @media (max-width: 600px) {
   .leaderboard {

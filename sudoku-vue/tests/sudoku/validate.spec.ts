@@ -39,7 +39,7 @@ describe('validate', () => {
     const g = emptyGrid()
     expect(isSolved(g)).toBe(false)
     g[0][0] = 5
-    g[0][1] = 5 // konflikt
+    g[0][1] = 5 // conflict
     expect(isSolved(g)).toBe(false)
   })
 })

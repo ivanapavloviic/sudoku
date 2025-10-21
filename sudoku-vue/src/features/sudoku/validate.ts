@@ -1,4 +1,3 @@
-// src/features/sudoku/validate.ts
 import type { Digit, Grid, MaybeDigit } from './types'
 import { GRID_SIZE, BOX_SIZE, boxTopLeft } from './types'
 

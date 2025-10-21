@@ -14,7 +14,7 @@ import type { GameResult, Leaderboard } from '../../src/features/sudoku/scoring'
 
 describe('scoring', () => {
   beforeEach(() => {
-    // Očisti localStorage
+    // Clear localStorage
     localStorage.clear()
   })
 

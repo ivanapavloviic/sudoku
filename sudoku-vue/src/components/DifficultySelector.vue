@@ -102,23 +102,9 @@ const getLevelSubTextClasses = (rank: string): string => {
 </script>
 
 <style scoped>
-.difficulty-selector {}
-
-.difficulty-selector h3 {}
-
-.difficulty-options {}
-
-.difficulty-btn {}
-
 .difficulty-btn:hover { border-color: #aa998f; background-color: rgba(249,234,225,.7); }
 
 .difficulty-btn.active { border-color: #cc8b86; background-color: rgba(249,234,225,.8); box-shadow: 0 4px 12px rgba(125, 79, 80, 0.2); }
-
-.difficulty-name {}
-
-.difficulty-range {}
-
-.difficulty-description {}
 
 /* Responsive design */
 @media (max-width: 768px) {

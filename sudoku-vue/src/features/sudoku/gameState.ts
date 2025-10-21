@@ -1,4 +1,3 @@
-// src/features/sudoku/gameState.ts
 import type { Grid, Digit, Rank, MaybeDigit } from './types'
 import { cloneGrid } from './types'
 import { isValidPlacement, isSolved } from './validate'

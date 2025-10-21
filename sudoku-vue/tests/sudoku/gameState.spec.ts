@@ -29,7 +29,7 @@ describe('gameState', () => {
   it('prevents editing original cells', () => {
     const game = createNewGame(Rank.Beginner)
     
-    // Pronađi originalnu ćeliju
+    // Find original cell
     let originalRow = -1
     let originalCol = -1
     for (let r = 0; r < 9; r++) {
@@ -53,7 +53,7 @@ describe('gameState', () => {
   it('allows editing empty cells', () => {
     const game = createNewGame(Rank.Beginner)
     
-    // Pronađi praznu ćeliju
+    // Find empty cell
     let emptyRow = -1
     let emptyCol = -1
     for (let r = 0; r < 9; r++) {
@@ -78,7 +78,7 @@ describe('gameState', () => {
   it('gives hint correctly', () => {
     const game = createNewGame(Rank.Beginner)
     
-    // Pronađi praznu ćeliju
+    // Find empty cell
     let emptyRow = -1
     let emptyCol = -1
     for (let r = 0; r < 9; r++) {
@@ -97,13 +97,13 @@ describe('gameState', () => {
     expect(hintResult.value).toBeDefined()
     expect(hintResult.newState).toBeDefined()
     expect(hintResult.newState?.hintsUsed).toBe(1)
-    expect(hintResult.newState?.hintCost).toBe(4) // Sledeći hint košta više
+    expect(hintResult.newState?.hintCost).toBe(4) // Next hint costs more
   })
 
   it('prevents hint for original cells', () => {
     const game = createNewGame(Rank.Beginner)
     
-    // Pronađi originalnu ćeliju
+    // Find original cell
     let originalRow = -1
     let originalCol = -1
     for (let r = 0; r < 9; r++) {
@@ -125,7 +125,7 @@ describe('gameState', () => {
     const game = createNewGame(Rank.Beginner)
     const time1 = getCurrentTime(game)
     
-    // Sačekaj malo
+    // Wait a bit
     await new Promise(resolve => setTimeout(resolve, 50))
     const time2 = getCurrentTime(game)
     expect(time2).toBeGreaterThanOrEqual(time1)

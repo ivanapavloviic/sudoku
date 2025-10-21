@@ -48,7 +48,7 @@ describe('generator', () => {
     const puzzle1 = generatePuzzle(Rank.Beginner)
     const puzzle2 = generatePuzzle(Rank.Beginner)
     
-    // Verovatnoća da su identični je vrlo mala, ali proverimo da nisu
+    // Probability of being identical is very low, but let's check they're not
     let isIdentical = true
     for (let r = 0; r < 9; r++) {
       for (let c = 0; c < 9; c++) {

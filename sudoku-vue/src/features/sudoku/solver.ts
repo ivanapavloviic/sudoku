@@ -1,4 +1,3 @@
-// src/features/sudoku/solver.ts
 import type { Digit, Grid, MaybeDigit } from './types'
 import { GRID_SIZE } from './types'
 import { isValidPlacement } from './validate'

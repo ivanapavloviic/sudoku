@@ -718,14 +718,11 @@ onUnmounted(() => {
   opacity: 0.9;
 }
 
-
-
 .game-controls {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
-
 
 .leaderboard-view {
   display: flex;

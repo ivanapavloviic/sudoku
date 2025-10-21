@@ -1,4 +1,3 @@
-// src/features/sudoku/generator.ts
 import type { Grid, Rank } from './types'
 import { emptyGrid, cloneGrid, RANK_VISIBLE_RANGES } from './types'
 import { solve, hasUniqueSolution } from './solver'

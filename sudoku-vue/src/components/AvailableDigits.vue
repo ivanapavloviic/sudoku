@@ -45,11 +45,6 @@ const selectDigit = (digit: Digit) => {
 </script>
 
 <style scoped>
-.available-digits {}
-
-.available-digits h4 {}
-
-.digits-grid {}
 
 .digit-btn { border-color: #d1be9c; background: #f9eae1; color: #7d4f50; font-size: 1.2rem; }
 
@@ -62,8 +57,6 @@ const selectDigit = (digit: Digit) => {
 .digit-btn.complete .digit-number {
   opacity: 0.5;
 }
-
-/* removed tick status */
 
 /* Responsive design */
 @media (max-width: 600px) {
